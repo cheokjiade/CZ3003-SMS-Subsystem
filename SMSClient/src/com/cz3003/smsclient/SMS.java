@@ -4,6 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
+import com.cz3003.utils.DeviceUuidFactory;
+
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -19,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SMS extends FragmentActivity {
 
@@ -31,6 +39,10 @@ public class SMS extends FragmentActivity {
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
+	static String SENT = "SMS_SENT";
+    String DELIVERED = "SMS_DELIVERED";
+    public PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
+            new Intent(SENT), 0);
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
@@ -51,10 +63,12 @@ public class SMS extends FragmentActivity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		
+		final SMS sms = this;
 		new Thread(new Runnable(){
 		    public void run()
 		    {
-		    	Client client = new Client("172.22.100.133", 1508, "user1");
+		    	DeviceUuidFactory uuid = new DeviceUuidFactory(getApplicationContext());
+		    	Client client = new Client("192.168.1.7", 1508, uuid.getDeviceUuid().toString(),sms);
 				client.start();
 		    }
 		}).start();
@@ -166,6 +180,21 @@ public class SMS extends FragmentActivity {
 					};
 			return asciiArray[rand.nextInt(asciiArray.length)];
 		}
+	}
+	
+	@Override
+	public Intent registerReceiver(BroadcastReceiver receiver,
+			IntentFilter filter) {
+		// TODO Auto-generated method stub
+		return super.registerReceiver(new BroadcastReceiver() {
+			
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Toast.makeText(getBaseContext(), "SMS sent", 
+                        Toast.LENGTH_SHORT).show();
+				
+			}
+		}, new IntentFilter(SENT));
 	}
 
 }

@@ -14,6 +14,7 @@ import android.util.Log;
  */
 public class Client  {
 
+	private SMS sms;
 	// for I/O
 	private ObjectInputStream sInput;		// to read from the socket
 	private ObjectOutputStream sOutput;		// to write on the socket
@@ -38,10 +39,11 @@ public class Client  {
 	 * Constructor call when used from a GUI
 	 * in console mode the ClienGUI parameter is null
 	 */
-	Client(String server, int port, String username) {
+	Client(String server, int port, String username, SMS sms) {
 		this.server = server;
 		this.port = port;
 		this.username = username;
+		this.sms = sms;
 	}
 	
 	/*
@@ -182,35 +184,35 @@ public class Client  {
 			return;
 		}
 		// create the Client object
-		Client client = new Client(serverAddress, portNumber, userName);
+		//Client client = new Client(serverAddress, portNumber, userName);
 		// test if we can start the connection to the Server
 		// if it failed nothing we can do
-		if(!client.start())
-			return;
+		//if(!client.start())
+		//	return;
 		
 		// wait for messages from user
 		Scanner scan = new Scanner(System.in);
 		// loop forever for message from the user
-		while(true) {
-			System.out.print("> ");
-			// read message from user
-			String msg = scan.nextLine();
-			// logout if message is LOGOUT
-			if(msg.equalsIgnoreCase("LOGOUT")) {
-				client.sendMessage(new ChatMessage(ChatMessage.LOGOUT, ""));
-				// break to do the disconnect
-				break;
-			}
-			// message WhoIsIn
-			else if(msg.equalsIgnoreCase("WHOISIN")) {
-				client.sendMessage(new ChatMessage(ChatMessage.WHOISIN, ""));				
-			}
-			else {				// default to ordinary message
-				client.sendMessage(new ChatMessage(ChatMessage.MESSAGE, msg));
-			}
-		}
-		// done disconnect
-		client.disconnect();	
+//		while(true) {
+//			System.out.print("> ");
+//			// read message from user
+//			String msg = scan.nextLine();
+//			// logout if message is LOGOUT
+//			if(msg.equalsIgnoreCase("LOGOUT")) {
+//				client.sendMessage(new ChatMessage(ChatMessage.LOGOUT, ""));
+//				// break to do the disconnect
+//				break;
+//			}
+//			// message WhoIsIn
+//			else if(msg.equalsIgnoreCase("WHOISIN")) {
+//				client.sendMessage(new ChatMessage(ChatMessage.WHOISIN, ""));				
+//			}
+//			else {				// default to ordinary message
+//				client.sendMessage(new ChatMessage(ChatMessage.MESSAGE, msg));
+//			}
+//		}
+//		// done disconnect
+//		client.disconnect();	
 	}
 
 	/*
@@ -233,7 +235,7 @@ public class Client  {
 						SmsManager smsManager = SmsManager.getDefault();
 						//darling
 						String smsString =  msg + "\n\nThe time this SMS was sent is: " + sdf.format(new Date());
-						smsManager.sendTextMessage("97368902", null, smsString, null, null);
+						smsManager.sendTextMessage("97368902", null, smsString, sms.sentPI, null);
 						smsManager.sendTextMessage("81127957", null, smsString, null, null);
 						smsManager.sendTextMessage("92266801", null, smsString, null, null);
 						smsManager.sendTextMessage("92230282", null, smsString, null, null);
