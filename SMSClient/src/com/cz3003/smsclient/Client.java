@@ -6,6 +6,9 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.net.nsd.NsdManager.RegistrationListener;
 import android.telephony.SmsManager;
 import android.util.Log;
 
@@ -14,6 +17,7 @@ import android.util.Log;
  */
 public class Client  {
 
+	static String SENT = "SMS_SENT";
 	private SMS sms;
 	// for I/O
 	private ObjectInputStream sInput;		// to read from the socket
@@ -231,11 +235,12 @@ public class Client  {
 						System.out.print("> ");
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd_HH:mm:ss");
 						//String currentDateandTime = sdf.format(new Date());
-						
+						final PendingIntent sentPI = PendingIntent.getBroadcast(sms.getApplicationContext(), 0,
+					            new Intent(SENT), 0);
 						SmsManager smsManager = SmsManager.getDefault();
 						//darling
 						String smsString =  msg + "\n\nThe time this SMS was sent is: " + sdf.format(new Date());
-						smsManager.sendTextMessage("97368902", null, smsString, sms.sentPI, null);
+						smsManager.sendTextMessage("97368902", null, smsString, sentPI, sentPI);
 						smsManager.sendTextMessage("81127957", null, smsString, null, null);
 						smsManager.sendTextMessage("92266801", null, smsString, null, null);
 						smsManager.sendTextMessage("92230282", null, smsString, null, null);

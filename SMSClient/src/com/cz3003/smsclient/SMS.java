@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.cz3003.utils.DeviceUuidFactory;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -41,8 +42,7 @@ public class SMS extends FragmentActivity {
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	static String SENT = "SMS_SENT";
     String DELIVERED = "SMS_DELIVERED";
-    public PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
-            new Intent(SENT), 0);
+    //public PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
@@ -68,10 +68,11 @@ public class SMS extends FragmentActivity {
 		    public void run()
 		    {
 		    	DeviceUuidFactory uuid = new DeviceUuidFactory(getApplicationContext());
-		    	Client client = new Client("192.168.1.7", 1508, uuid.getDeviceUuid().toString(),sms);
+		    	Client client = new Client("192.168.1.15", 1508, uuid.getDeviceUuid().toString(),sms);
 				client.start();
 		    }
 		}).start();
+		Toast.makeText(getBaseContext(), "Test", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -182,6 +183,7 @@ public class SMS extends FragmentActivity {
 		}
 	}
 	
+	
 	@Override
 	public Intent registerReceiver(BroadcastReceiver receiver,
 			IntentFilter filter) {
@@ -196,5 +198,6 @@ public class SMS extends FragmentActivity {
 			}
 		}, new IntentFilter(SENT));
 	}
-
-}
+	
+	
+	}

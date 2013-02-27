@@ -111,7 +111,7 @@ public class Server extends Thread{
 	public synchronized void broadcast(String message) {
 		// add HH:mm:ss and \n to the message
 		String time = sdf.format(new Date());
-		String messageLf = time + " " + message + "\n";
+		String messageLf = message + "\n";
 		// display message on console or GUI
 			System.out.print(messageLf);
 		
@@ -123,7 +123,7 @@ public class Server extends Thread{
 			if(!ct.writeMsg(messageLf)) {
 				al.remove(i);
 				display("Disconnected Client " + ct.username + " removed from list.");
-			}
+			}else break;
 		}
 	}
 
