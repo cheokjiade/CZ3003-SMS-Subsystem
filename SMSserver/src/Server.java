@@ -182,7 +182,7 @@ public class Server extends Thread{
 		// the Username of the Client
 		String username;
 		// the only type of message a will receive
-		ChatMessage cm;
+		SMSMessage cm;
 		// the date I connect
 		String date;
 
@@ -220,7 +220,7 @@ public class Server extends Thread{
 			while(keepGoing) {
 				// read a String (which is an object)
 				try {
-					cm = (ChatMessage) sInput.readObject();
+					cm = (SMSMessage) sInput.readObject();
 				}
 				catch (IOException e) {
 					display(username + " Exception reading Streams: " + e);
@@ -235,14 +235,14 @@ public class Server extends Thread{
 				// Switch on the type of message receive
 				switch(cm.getType()) {
 
-				case ChatMessage.MESSAGE:
+				case SMSMessage.MESSAGE:
 					broadcast(username + ": " + message);
 					break;
-				case ChatMessage.LOGOUT:
+				case SMSMessage.LOGOUT:
 					display(username + " disconnected with a LOGOUT message.");
 					keepGoing = false;
 					break;
-				case ChatMessage.WHOISIN:
+				case SMSMessage.WHOISIN:
 					writeMsg("List of the users connected at " + sdf.format(new Date()) + "\n");
 					// scan al the users connected
 					for(int i = 0; i < al.size(); ++i) {

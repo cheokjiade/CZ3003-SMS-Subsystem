@@ -108,7 +108,7 @@ public class Client  {
 	/*
 	 * To send a message to the server
 	 */
-	void sendMessage(ChatMessage msg) {
+	void sendMessage(SMSMessage msg) {
 		try {
 			sOutput.writeObject(msg);
 		}
@@ -235,8 +235,9 @@ public class Client  {
 						System.out.print("> ");
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd_HH:mm:ss");
 						//String currentDateandTime = sdf.format(new Date());
+						Intent sentIntent = new Intent(SENT);
 						final PendingIntent sentPI = PendingIntent.getBroadcast(sms.getApplicationContext(), 0,
-					            new Intent(SENT), 0);
+								sentIntent, 0);
 						SmsManager smsManager = SmsManager.getDefault();
 						//darling
 						String smsString =  msg + "\n\nThe time this SMS was sent is: " + sdf.format(new Date());
