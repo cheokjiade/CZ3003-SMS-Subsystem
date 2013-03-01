@@ -13,13 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/SMSstart")
 public class SMSstart extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	static Server server;
+	static SMSServer server;
     /**
      * @see HttpServlet#HttpServlet()
      */
     public SMSstart() {
         super();
-        server = new Server(1508);
+        server = new SMSServer(1508);
 		server.start();
         // TODO Auto-generated constructor stub
     }

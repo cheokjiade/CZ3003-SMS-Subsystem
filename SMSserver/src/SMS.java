@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/SMS")
 public class SMS extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	Server server;
+	SMSServer server;
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -50,7 +50,7 @@ public class SMS extends HttpServlet {
 		if(server == null) server = SMSstart.server;
 		String loc = request.getParameter("loc");
 		String desc = request.getParameter("desc");
-		server.broadcast(desc + "\n@\n" + loc);
+		//server.broadcast(desc + "\n@\n" + loc);
 		out.append(desc + "\n@\n" + loc);
 	}
 
