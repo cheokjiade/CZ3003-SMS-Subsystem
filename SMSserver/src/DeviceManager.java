@@ -12,14 +12,17 @@ public class DeviceManager extends Thread{
 	private ArrayList<SMSClient> smsClientArrayList;
 	private static int uniqueId;
 	private SimpleDateFormat sdf;
-	
+	private SMSLog smsLog;
 	private boolean keepGoing;
 	
 	private int port;
 	
-	public DeviceManager (){
+	public DeviceManager (int port){
 		
 		sdf = new SimpleDateFormat("HH:mm:ss");
+		smsLog = new SMSLog();
+		this.port = port;
+		smsClientArrayList= new ArrayList<SMSClient>();
 		
 	}
 	public void start() {
@@ -34,14 +37,15 @@ public class DeviceManager extends Thread{
 			while(keepGoing) 
 			{
 				// format message saying we are waiting
-				//display("Server waiting for Clients on port " + port + ".");
+				display("Server waiting for Clients on port " + port + ".");
 				
 				Socket socket = serverSocket.accept();  	// accept connection
 				// if I was asked to stop
 				if(!keepGoing)
 					break;
-				SMSClient t = new SMSClient(socket, ++uniqueId);  // make a thread of it
-				smsClientArrayList.add(t);									// save it in the ArrayList
+				SMSClient t = new SMSClient(socket, ++uniqueId, smsLog);  // make a thread of it
+				smsClientArrayList.add(t);	
+				smsLog.addClient(uniqueId);// save it in the ArrayList
 				t.start();
 			}
 			// I was asked to stop
@@ -60,13 +64,13 @@ public class DeviceManager extends Thread{
 				}
 			}
 			catch(Exception e) {
-				//display("Exception closing the server and clients: " + e);
+				display("Exception closing the server and clients: " + e);
 			}
 		}
 		// something went bad
 		catch (IOException e) {
             String msg = sdf.format(new Date()) + " Exception on new ServerSocket: " + e + "\n";
-			//display(msg);
+			display(msg);
 		}
 	}
 	
@@ -81,10 +85,37 @@ public class DeviceManager extends Thread{
 			}
 		}
 	}
-	
+	private void display(String msg) {
+		String time = sdf.format(new Date()) + " " + msg;
+			System.out.println(time);
+	}
 	
 	public ArrayList<SMSClient> getSMSClients(){
 		return smsClientArrayList;
+	}
+	public static int getUniqueId() {
+		return uniqueId;
+	}
+	public static void setUniqueId(int uniqueId) {
+		DeviceManager.uniqueId = uniqueId;
+	}
+	public SMSLog getSmsLog() {
+		return smsLog;
+	}
+	public void setSmsLog(SMSLog smsLog) {
+		this.smsLog = smsLog;
+	}
+	public boolean isKeepGoing() {
+		return keepGoing;
+	}
+	public void setKeepGoing(boolean keepGoing) {
+		this.keepGoing = keepGoing;
+	}
+	public int getPort() {
+		return port;
+	}
+	public void setPort(int port) {
+		this.port = port;
 	}
 	
 }

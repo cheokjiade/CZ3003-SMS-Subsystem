@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/SMS")
 public class SMS extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	SMSServer server;
+	LoadBalancer server;
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -31,6 +31,7 @@ public class SMS extends HttpServlet {
 	 */
 	public void init(ServletConfig config) throws ServletException {
 		// TODO Auto-generated method stub
+		server = new LoadBalancer();
 	}
 
 	/**
@@ -46,10 +47,11 @@ public class SMS extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		if (SMSstart.server == null) SMSstart.server.start();
-		if(server == null) server = SMSstart.server;
+		//if (SMSstart.server == null) SMSstart.server.start();
+		//if(server == null) server = SMSstart.server;
 		String loc = request.getParameter("loc");
 		String desc = request.getParameter("desc");
+		server.sendMessageOut(desc + "\n@\n" + loc, "92390354");
 		//server.broadcast(desc + "\n@\n" + loc);
 		out.append(desc + "\n@\n" + loc);
 	}

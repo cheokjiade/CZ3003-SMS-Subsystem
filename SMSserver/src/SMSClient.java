@@ -1,3 +1,5 @@
+import interfaces.ClientMessageReceived;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -18,9 +20,15 @@ public class SMSClient extends Thread {
 		SMSMessage cm;
 		// the date I connect
 		String date;
+		//send message to interface
+		ClientMessageReceived clientMessageReceived;
 
 		// Constructore
-		SMSClient(Socket socket, int uniqueId) {
+		public SMSClient(Socket socket, int uniqueId, ClientMessageReceived clientMessageReceived) {
+			this(socket, uniqueId);
+			this.clientMessageReceived= clientMessageReceived;
+		}
+		public SMSClient(Socket socket, int uniqueId) {
 			// a unique id
 			this.uniqueId = uniqueId;
 			this.socket = socket;
@@ -33,7 +41,7 @@ public class SMSClient extends Thread {
 				sInput  = new ObjectInputStream(socket.getInputStream());
 				// read the username
 				username = (String) sInput.readObject();
-				//display(username + " just connected.");
+				display(username + " just connected.");
 			}
 			catch (IOException e) {
 				//display("Exception creating new Input/output Streams: " + e);
@@ -56,7 +64,7 @@ public class SMSClient extends Thread {
 					cm = (SMSMessage) sInput.readObject();
 				}
 				catch (IOException e) {
-					//display(username + " Exception reading Streams: " + e);
+					display(username + " Exception reading Streams: " + e);
 					break;				
 				}
 				catch(ClassNotFoundException e2) {
@@ -70,6 +78,8 @@ public class SMSClient extends Thread {
 
 				case SMSMessage.MESSAGE:
 					//broadcast(username + ": " + message);
+					//TODO received message from sms client, logic here
+					clientMessageReceived.onMessageReceived(message, 0);
 					break;
 				case SMSMessage.LOGOUT:
 					//display(username + " disconnected with a LOGOUT message.");
@@ -123,10 +133,14 @@ public class SMSClient extends Thread {
 			}
 			// if an error occurs, do not abort just inform the user
 			catch(IOException e) {
-				//display("Error sending message to " + username);
-				//display(e.toString());
+				display("Error sending message to " + username);
+				display(e.toString());
 			}
 			return true;
+		}
+		private void display(String msg) {
+			String time =  msg;
+				System.out.println(time);
 		}
 
 		public long getId() {
@@ -135,5 +149,13 @@ public class SMSClient extends Thread {
 
 		public void setId(int id) {
 			this.uniqueId = id;
+		}
+
+		public ClientMessageReceived getClientMessageReceived() {
+			return clientMessageReceived;
+		}
+
+		public void setClientMessageReceived(ClientMessageReceived clientMessageReceived) {
+			this.clientMessageReceived = clientMessageReceived;
 		}
 	}
