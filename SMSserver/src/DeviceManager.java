@@ -43,7 +43,7 @@ public class DeviceManager extends Thread{
 				// if I was asked to stop
 				if(!keepGoing)
 					break;
-				SMSClient t = new SMSClient(socket, ++uniqueId, smsLog);  // make a thread of it
+				SMSClient t = new SMSClient(socket, ++uniqueId, smsLog, this);  // make a thread of it
 				smsClientArrayList.add(t);	
 				smsLog.addClient(uniqueId);// save it in the ArrayList
 				t.start();
@@ -85,6 +85,8 @@ public class DeviceManager extends Thread{
 			}
 		}
 	}
+	
+	
 	private void display(String msg) {
 		String time = sdf.format(new Date()) + " " + msg;
 			System.out.println(time);

@@ -130,7 +130,6 @@ public class SMSServer extends Thread{
 //		}
 //	}
 
-	// for a client who logoff using the LOGOUT message
 //	synchronized void remove(int id) {
 //		// scan the array list until we found the Id
 //		for(int i = 0; i < al.size(); ++i) {

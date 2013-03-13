@@ -12,6 +12,7 @@ public class SMSClient extends Thread {
 		Socket socket;
 		ObjectInputStream sInput;
 		ObjectOutputStream sOutput;
+		DeviceManager dm;
 		// my unique id (easier for deconnection)
 		int uniqueId;
 		// the Username of the Client
@@ -24,9 +25,10 @@ public class SMSClient extends Thread {
 		ClientMessageReceived clientMessageReceived;
 
 		// Constructore
-		public SMSClient(Socket socket, int uniqueId, ClientMessageReceived clientMessageReceived) {
+		public SMSClient(Socket socket, int uniqueId, ClientMessageReceived clientMessageReceived, DeviceManager dm) {
 			this(socket, uniqueId);
 			this.clientMessageReceived= clientMessageReceived;
+			this.dm = dm;
 		}
 		public SMSClient(Socket socket, int uniqueId) {
 			// a unique id
@@ -65,6 +67,7 @@ public class SMSClient extends Thread {
 				}
 				catch (IOException e) {
 					display(username + " Exception reading Streams: " + e);
+					keepGoing= false;
 					break;				
 				}
 				catch(ClassNotFoundException e2) {
@@ -97,7 +100,7 @@ public class SMSClient extends Thread {
 			}
 			// remove myself from the arrayList containing the list of the
 			// connected Clients
-			//remove(id);
+			dm.remove(uniqueId);
 			close();
 		}
 		
