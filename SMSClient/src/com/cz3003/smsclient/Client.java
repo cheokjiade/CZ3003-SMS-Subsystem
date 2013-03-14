@@ -244,18 +244,17 @@ public class Client{
 						System.out.print("> ");
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd_HH:mm:ss");
 						//String currentDateandTime = sdf.format(new Date());
-						Intent sentIntent = new Intent(SENT);
-						final PendingIntent sentPI = PendingIntent.getBroadcast(sms.getApplicationContext(), 0,
-								sentIntent, 0);
-						SmsManager smsManager = SmsManager.getDefault();
+						//Intent sentIntent = new Intent(SENT);
+						//final PendingIntent sentPI = PendingIntent.getBroadcast(sms.getApplicationContext(), 0,sentIntent, 0);
+						//SmsManager smsManager = SmsManager.getDefault();
 						//darling
-						String smsString =  msg + "\n\nThe time this SMS was sent is: " + sdf.format(new Date());
+						//String smsString =  msg + "\n\nThe time this SMS was sent is: " + sdf.format(new Date());
 						//smsManager.sendTextMessage("97368902", null, smsString, sentPI, sentPI);
 						//smsManager.sendTextMessage("81127957", null, smsString, null, null);
 						//smsManager.sendTextMessage("92266801", null, smsString, null, null);
 						//smsManager.sendTextMessage("92230282", null, smsString, null, null);
 						//smsManager.sendTextMessage("94593932", null, smsString, null, null);
-						sms.sendSMS("97368902", msg + "\n\nThe time this SMS was sent is: " + sdf.format(new Date()));
+						sms.sendSMS("92390354", msg + "\n\nThe time this SMS was sent is: " + sdf.format(new Date()));
 				}
 				catch(IOException e) {
 					display("Server has close the connection: " + e);

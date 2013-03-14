@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -51,12 +52,13 @@ public class SMS extends FragmentActivity {
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+	final SMS sms = this;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sms);
-
+		registerReceivers();
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
@@ -66,7 +68,7 @@ public class SMS extends FragmentActivity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		
-		final SMS sms = this;
+		
 		
 		new Thread(new Runnable(){
 		    public void run()
@@ -78,7 +80,59 @@ public class SMS extends FragmentActivity {
 		}).start();
 		Toast.makeText(getBaseContext(), "Test", Toast.LENGTH_SHORT).show();
 	}
-	
+	public void registerReceivers(){
+		//---when the SMS has been sent---
+        registerReceiver(new BroadcastReceiver(){
+            @Override
+            public void onReceive(Context arg0, Intent arg1) {
+            	Log.w("sms","SMS sent" + sdf.format(new Date()));
+                switch (getResultCode())
+                {
+                    case Activity.RESULT_OK: {
+                        Toast.makeText(getApplicationContext(), "SMS sent" + sdf.format(new Date()), 
+                                Toast.LENGTH_SHORT).show();
+                        Log.w("sms","SMS sent" + sdf.format(new Date()));
+                    }
+                        break;
+                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                        Toast.makeText(sms, "Generic failure", 
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case SmsManager.RESULT_ERROR_NO_SERVICE:
+                        Toast.makeText(sms, "No service", 
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case SmsManager.RESULT_ERROR_NULL_PDU:
+                        Toast.makeText(sms, "Null PDU", 
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case SmsManager.RESULT_ERROR_RADIO_OFF:
+                        Toast.makeText(sms, "Radio off", 
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        }, new IntentFilter(SENT));
+ 
+        //---when the SMS has been delivered---
+        registerReceiver(new BroadcastReceiver(){
+            @Override
+            public void onReceive(Context arg0, Intent arg1) {
+            	Log.w("sms","SMS delivered" + sdf.format(new Date()));
+                switch (getResultCode())
+                {
+                    case Activity.RESULT_OK:
+                        Toast.makeText(sms, "SMS delivered"+ sdf.format(new Date()), 
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        Toast.makeText(sms, "SMS not delivered", 
+                                Toast.LENGTH_SHORT).show();
+                        break;                        
+                }
+            }
+        }, new IntentFilter(DELIVERED));    
+	}
 	public void sendSMS(String phoneNumber, String message)
     {        
         String SENT = "SMS_SENT";
@@ -90,58 +144,10 @@ public class SMS extends FragmentActivity {
         PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
             new Intent(DELIVERED), 0);
  
-        //---when the SMS has been sent---
-        registerReceiver(new BroadcastReceiver(){
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                switch (getResultCode())
-                {
-                    case Activity.RESULT_OK: {
-                        Toast.makeText(getParent(), "SMS sent" + sdf.format(new Date()), 
-                                Toast.LENGTH_SHORT).show();
-                        Log.w("sms","SMS sent" + sdf.format(new Date()));
-                    }
-                        break;
-                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        Toast.makeText(getParent(), "Generic failure", 
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    case SmsManager.RESULT_ERROR_NO_SERVICE:
-                        Toast.makeText(getParent(), "No service", 
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    case SmsManager.RESULT_ERROR_NULL_PDU:
-                        Toast.makeText(getParent(), "Null PDU", 
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        Toast.makeText(getParent(), "Radio off", 
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-        }, new IntentFilter(SENT));
- 
-        //---when the SMS has been delivered---
-        registerReceiver(new BroadcastReceiver(){
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                switch (getResultCode())
-                {
-                    case Activity.RESULT_OK:
-                        Toast.makeText(getParent(), "SMS delivered"+ sdf.format(new Date()), 
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        Toast.makeText(getParent(), "SMS not delivered", 
-                                Toast.LENGTH_SHORT).show();
-                        break;                        
-                }
-            }
-        }, new IntentFilter(DELIVERED));        
+            
  
         SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, message, sentPI, sentPI);        
+        sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);        
     }
 
 	@Override
@@ -253,21 +259,21 @@ public class SMS extends FragmentActivity {
 	}
 	
 	
-	@Override
-	public Intent registerReceiver(BroadcastReceiver receiver,
-			IntentFilter filter) {
-		// TODO Auto-generated method stub
-		return super.registerReceiver(new BroadcastReceiver() {
-			
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				Toast.makeText(getBaseContext(), "SMS sent", 
-                        Toast.LENGTH_SHORT).show();
-				Log.w("sms","SMS sent" + sdf.format(new Date()));
-				
-			}
-		}, new IntentFilter(SENT));
-	}
+//	@Override
+//	public Intent registerReceiver(BroadcastReceiver receiver,
+//			IntentFilter filter) {
+//		// TODO Auto-generated method stub
+//		return super.registerReceiver(new BroadcastReceiver() {
+//			
+//			@Override
+//			public void onReceive(Context context, Intent intent) {
+//				Toast.makeText(getBaseContext(), "SMS sent" + intent, 
+//                        Toast.LENGTH_SHORT).show();
+//				Log.w("sms","SMS sent" + sdf.format(new Date()));
+//				
+//			}
+//		}, new IntentFilter(SENT));
+//	}
 	
 
 	
