@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
+import com.cz3003.message.SMSMessage;
 import com.cz3003.utils.DeviceUuidFactory;
 
 import android.app.Activity;
@@ -80,18 +81,20 @@ public class SMS extends FragmentActivity {
 		}).start();
 		Toast.makeText(getBaseContext(), "Test", Toast.LENGTH_SHORT).show();
 	}
+	
 	public void registerReceivers(){
 		//---when the SMS has been sent---
         registerReceiver(new BroadcastReceiver(){
             @Override
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS sent" + sdf.format(new Date()));
+            	client.sendMessage(new SMSMessage(SMSMessage.MESSAGE,"SMS sent"));
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK: {
                         Toast.makeText(getApplicationContext(), "SMS sent" + sdf.format(new Date()), 
                                 Toast.LENGTH_SHORT).show();
-                        Log.w("sms","SMS sent" + sdf.format(new Date()));
+                        //Log.w("sms","SMS sent" + sdf.format(new Date()));
                     }
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
@@ -119,6 +122,7 @@ public class SMS extends FragmentActivity {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS delivered" + sdf.format(new Date()));
+            	client.sendMessage(new SMSMessage(SMSMessage.MESSAGE,"SMS delivered"));
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK:

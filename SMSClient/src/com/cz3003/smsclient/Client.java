@@ -6,6 +6,8 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.cz3003.message.SMSMessage;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;

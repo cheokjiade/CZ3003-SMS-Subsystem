@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Date;
 
+import com.cz3003.message.SMSMessage;
+
 
 public class SMSClient extends Thread {
 		// the socket where to listen/talk
@@ -71,11 +73,12 @@ public class SMSClient extends Thread {
 					break;				
 				}
 				catch(ClassNotFoundException e2) {
+					display(username +  e2);
 					break;
 				}
 				// the messaage part of the ChatMessage
 				String message = cm.getMessage();
-
+				display(username + " " + message);
 				// Switch on the type of message receive
 				switch(cm.getType()) {
 
@@ -83,6 +86,7 @@ public class SMSClient extends Thread {
 					//broadcast(username + ": " + message);
 					//TODO received message from sms client, logic here
 					clientMessageReceived.onMessageReceived(message, 0);
+					display(username + " " + message);
 					break;
 				case SMSMessage.LOGOUT:
 					//display(username + " disconnected with a LOGOUT message.");
