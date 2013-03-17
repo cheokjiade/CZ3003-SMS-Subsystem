@@ -12,13 +12,24 @@ public class SMSLog implements ClientMessageReceived{
 		smsClientArrayList = new ArrayList<SMSClientLog>();
 	}
 	
-	public int selectBestClient(){
-		return smsClientArrayList.get(0).getId();
+	public synchronized int selectBestClient(){
+		//TODO choose a best client and return it.
+		int maxScore=0, bestClient=0;
+		for (int i = 0; i < smsClientArrayList.size();i++){
+			if (i==0) {
+				maxScore = smsClientArrayList.get(0).getScore();
+				bestClient = smsClientArrayList.get(0).getUniqueId();
+			} else {
+				if (smsClientArrayList.get(i).getScore()> maxScore)
+					bestClient = smsClientArrayList.get(i).getUniqueId();
+			}
+		}
+		return bestClient;
 	}
 	
 	public boolean removeClient(int id){
 		for (SMSClientLog clientLog: smsClientArrayList)
-			if(clientLog.getId()==id){
+			if(clientLog.getUniqueId()==id){
 				smsClientArrayList.remove(clientLog);
 				return true;
 			}
@@ -36,5 +47,10 @@ public class SMSLog implements ClientMessageReceived{
 	}
 	
 	//public boolean
-	
+	public SMSClientLog selectClientsLog(int id){
+		for (SMSClientLog log : smsClientArrayList) 
+			if (log.getUniqueId() == id) return log;
+		return null;
+		
+	}
 }

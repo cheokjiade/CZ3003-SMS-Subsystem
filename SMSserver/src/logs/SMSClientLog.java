@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class SMSClientLog {
 	private int score;
-	private int id;
+	private int uniqueId;
 	private ArrayList<SMSLogEntry> smsLogEntryArrayList;
-	public SMSClientLog (int id) {
-		this.id = id;
+	public SMSClientLog (int uniqueId) {
+		this.uniqueId = uniqueId;
 		smsLogEntryArrayList = new ArrayList<SMSLogEntry>();
 		score = 0;
 	}
@@ -17,11 +17,11 @@ public class SMSClientLog {
 	public void setScore(int score) {
 		this.score = score;
 	}
-	public int getId() {
-		return id;
+	public int getUniqueId() {
+		return uniqueId;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setUniqueId(int id) {
+		this.uniqueId = id;
 	}
 	public ArrayList<SMSLogEntry> getSmsLogEntryArrayList() {
 		return smsLogEntryArrayList;

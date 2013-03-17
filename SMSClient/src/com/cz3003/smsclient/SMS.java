@@ -88,7 +88,7 @@ public class SMS extends FragmentActivity {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS sent" + sdf.format(new Date()));
-            	client.sendMessage(new SMSMessage(SMSMessage.MESSAGE,"SMS sent"));
+            	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,"SMS sent"));
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK: {
@@ -122,7 +122,7 @@ public class SMS extends FragmentActivity {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS delivered" + sdf.format(new Date()));
-            	client.sendMessage(new SMSMessage(SMSMessage.MESSAGE,"SMS delivered"));
+            	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,"SMS delivered"));
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK:

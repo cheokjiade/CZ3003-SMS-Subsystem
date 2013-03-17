@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 
+import logs.SMSClientLog;
+import logs.SMSLogEntry;
+
 
 
 public class LoadBalancer {
@@ -20,19 +23,25 @@ public class LoadBalancer {
 	}
 	
 	public boolean sendMessageOut(String msg, String no){
-		if(sendMessageToClient(chooseBestClient(dm.getSMSClients()), msg, no)==false){
-			//TODO no connected clientadd to pending queue or something
+		SMSClient bestClient = chooseBestClient(dm.getSMSClients());
+		if(sendMessageToClient(bestClient, msg, no)==false){
+			//TODO no connected client. add to pending queue or something
+		}
+		else {
+			SMSClientLog clientLog = smsLog.selectClientsLog(bestClient.getUniqueId());
+			clientLog.getSmsLogEntryArrayList().add(new SMSLogEntry("Message sent to device", SMSLogEntry.MESSAGESENT));
+			clientLog.setScore(clientLog.getScore()-50);
 		}
 			
 		return true;
 	}
 	
-	public SMSClient chooseBestClient(ArrayList<SMSClient> smsClientArrayList){
+	public synchronized SMSClient chooseBestClient(ArrayList<SMSClient> smsClientArrayList){
 		//when no connected client method fails
 		if(smsClientArrayList.size()==0) return null;
 		int bestClient = smsLog.selectBestClient();
 		for (SMSClient client :smsClientArrayList)
-			if (client.getId()== bestClient) return client;
+			if (client.getUniqueId()== bestClient) return client;
 		smsLog.removeClient(bestClient);
 		//either return a best client or fail
 		return chooseBestClient(smsClientArrayList);

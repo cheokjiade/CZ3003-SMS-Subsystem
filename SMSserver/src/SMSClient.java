@@ -78,20 +78,22 @@ public class SMSClient extends Thread {
 				}
 				// the messaage part of the ChatMessage
 				String message = cm.getMessage();
+				clientMessageReceived.onMessageReceived(message, cm.getType());
 				display(username + " " + message);
+				//display(username + " " + message);
 				// Switch on the type of message receive
-				switch(cm.getType()) {
-
-				case SMSMessage.MESSAGE:
-					//broadcast(username + ": " + message);
-					//TODO received message from sms client, logic here
-					clientMessageReceived.onMessageReceived(message, 0);
-					display(username + " " + message);
-					break;
-				case SMSMessage.LOGOUT:
-					//display(username + " disconnected with a LOGOUT message.");
-					keepGoing = false;
-					break;
+//				switch(cm.getType()) {
+//
+//				case SMSMessage.MESSAGE:
+//					//broadcast(username + ": " + message);
+//					//TODO received message from sms client, logic here
+//					clientMessageReceived.onMessageReceived(message, 0);
+//					display(username + " " + message);
+//					break;
+//				case SMSMessage.LOGOUT:
+//					//display(username + " disconnected with a LOGOUT message.");
+//					keepGoing = false;
+//					break;
 //				case SMSMessage.WHOISIN:
 //					writeMsg("List of the users connected at " + sdf.format(new Date()) + "\n");
 //					// scan al the users connected
@@ -100,7 +102,7 @@ public class SMSClient extends Thread {
 //						writeMsg((i+1) + ") " + ct.username + " since " + ct.date);
 //					}
 //					break;
-				}
+//				}
 			}
 			// remove myself from the arrayList containing the list of the
 			// connected Clients
@@ -150,7 +152,7 @@ public class SMSClient extends Thread {
 				System.out.println(time);
 		}
 
-		public long getId() {
+		public int getUniqueId() {
 			return uniqueId;
 		}
 

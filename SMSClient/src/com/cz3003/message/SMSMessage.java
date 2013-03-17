@@ -15,11 +15,11 @@ public class SMSMessage implements Serializable {
 	// WHOISIN to receive the list of the users connected
 	// MESSAGE an ordinary message
 	// LOGOUT to disconnect from the Server
-	public static final int WHOISIN = 0;
-
-	public static final int MESSAGE = 1;
-
-	public static final int LOGOUT = 2;
+	public static final int SUCCESS = 0;
+	public static final int UNABLE_TO_SEND = 1;
+	public static final int UNABLE_TO_DELIVER = 2;
+	public static final int UNABLE_TO_CONNECT_TO_NETWORK = 3;
+	public static final int OTHERS = 4;
 	private int type;
 	private String message;
 	
