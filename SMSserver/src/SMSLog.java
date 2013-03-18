@@ -41,15 +41,25 @@ public class SMSLog implements ClientMessageReceived{
 	}
 
 	@Override
-	public void onMessageReceived(String msg, int errorCode) {
-		// TODO Auto-generated method stub
+	public void onMessageReceived(int uniqueId, String msg, int errorCode) {
+		SMSClientLog clientLog = selectClientsLog(uniqueId);
+		switch (errorCode) {
+		case 0:
+		{
+			clientLog.setScore(clientLog.getScore()+50);
+		}
+			break;
+
+		default:
+			break;
+		}
 		
 	}
 	
 	//public boolean
-	public SMSClientLog selectClientsLog(int id){
+	public SMSClientLog selectClientsLog(int uniqueId){
 		for (SMSClientLog log : smsClientArrayList) 
-			if (log.getUniqueId() == id) return log;
+			if (log.getUniqueId() == uniqueId) return log;
 		return null;
 		
 	}

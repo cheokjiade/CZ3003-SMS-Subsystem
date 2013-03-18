@@ -43,8 +43,8 @@ public class SMS extends FragmentActivity {
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
-	static String SENT = "SMS_SENT";
-    String DELIVERED = "SMS_DELIVERED";
+	private static final String SENT = "SMS_SENT";
+	private static final String DELIVERED = "SMS_DELIVERED";
     Client client;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd_HH:mm:ss");
     //public PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
@@ -122,6 +122,7 @@ public class SMS extends FragmentActivity {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS delivered" + sdf.format(new Date()));
+            	//arg1.get
             	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,"SMS delivered"));
                 switch (getResultCode())
                 {
@@ -139,9 +140,11 @@ public class SMS extends FragmentActivity {
 	}
 	public void sendSMS(String phoneNumber, String message)
     {        
-        String SENT = "SMS_SENT";
-        String DELIVERED = "SMS_DELIVERED";
- 
+        //String SENT = "SMS_SENT";
+        //String DELIVERED = "SMS_DELIVERED";
+        Intent sentIntent = new Intent(SENT);
+        Intent deliveredIntent = new Intent(DELIVERED);
+        
         PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
             new Intent(SENT), 0);
  

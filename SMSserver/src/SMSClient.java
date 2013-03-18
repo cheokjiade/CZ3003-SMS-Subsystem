@@ -78,7 +78,7 @@ public class SMSClient extends Thread {
 				}
 				// the messaage part of the ChatMessage
 				String message = cm.getMessage();
-				clientMessageReceived.onMessageReceived(message, cm.getType());
+				clientMessageReceived.onMessageReceived(uniqueId, message, cm.getType());
 				display(username + " " + message);
 				//display(username + " " + message);
 				// Switch on the type of message receive
