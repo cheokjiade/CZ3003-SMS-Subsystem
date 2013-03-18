@@ -15,13 +15,16 @@ public class SMSMessage implements Serializable {
 	// WHOISIN to receive the list of the users connected
 	// MESSAGE an ordinary message
 	// LOGOUT to disconnect from the Server
-	public static final int SUCCESS = 0;
-	public static final int UNABLE_TO_SEND = 1;
-	public static final int UNABLE_TO_DELIVER = 2;
-	public static final int UNABLE_TO_CONNECT_TO_NETWORK = 3;
-	public static final int OTHERS = 4;
-	private int type;
-	private String message;
+	public static final int SUCCESS = 0;//SMS was delivered
+	public static final int UNABLE_TO_SEND = 1; //unable to send to telco
+	public static final int UNABLE_TO_DELIVER = 2; //send to telco but cannot deliver to recipient
+	public static final int UNABLE_TO_CONNECT_TO_NETWORK = 3; // device cannot connect to network
+	public static final int OTHERS = 4; // others
+	public static final int MESSAGETOSMS = 5; // server sends a message to device
+	private int type; //for the types above
+	private String message; // the message
+	private String incidentId; // the incident id to map to
+	private String recipient;
 	
 	// constructor
 	public SMSMessage(int type, String message) {
