@@ -45,6 +45,7 @@ public class SMS extends FragmentActivity {
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	private static final String SENT = "SMS_SENT";
 	private static final String DELIVERED = "SMS_DELIVERED";
+	static int uniqueSMSId = 1;
     Client client;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd_HH:mm:ss");
     //public PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
@@ -88,11 +89,11 @@ public class SMS extends FragmentActivity {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS sent" + sdf.format(new Date()));
-            	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,"SMS sent"));
+            	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent" + sdf.format(new Date())));
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK: {
-                        Toast.makeText(getApplicationContext(), "SMS sent" + sdf.format(new Date()), 
+                        Toast.makeText(getApplicationContext(), "SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent" + sdf.format(new Date()), 
                                 Toast.LENGTH_SHORT).show();
                         //Log.w("sms","SMS sent" + sdf.format(new Date()));
                     }
@@ -123,7 +124,7 @@ public class SMS extends FragmentActivity {
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS delivered" + sdf.format(new Date()));
             	//arg1.get
-            	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,"SMS delivered"));
+            	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " delivered"+ sdf.format(new Date())));
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK:
@@ -144,17 +145,19 @@ public class SMS extends FragmentActivity {
         //String DELIVERED = "SMS_DELIVERED";
         Intent sentIntent = new Intent(SENT);
         Intent deliveredIntent = new Intent(DELIVERED);
-        
-        PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
-            new Intent(SENT), 0);
+        sentIntent.putExtra("com.cz3003.smsclient.smsid", uniqueSMSId);
+        deliveredIntent.putExtra("com.cz3003.smsclient.smsid", uniqueSMSId);
+        PendingIntent sentPI = PendingIntent.getBroadcast(this, uniqueSMSId,
+        		sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
  
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
-            new Intent(DELIVERED), 0);
+        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, uniqueSMSId,
+        		deliveredIntent, PendingIntent.FLAG_UPDATE_CURRENT);
  
             
  
         SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);        
+        sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+        uniqueSMSId++;
     }
 
 	@Override

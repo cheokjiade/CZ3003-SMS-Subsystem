@@ -48,7 +48,7 @@ public class LoadBalancer {
 		//return null;
 	}
 	
-	
+	//TODO change msg and no to smsmessage object
 	public boolean sendMessageToClient(SMSClient client, String msg, String no){
 		//when no connected client we cant send a message
 		if (client == null) return false;

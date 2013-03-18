@@ -256,7 +256,7 @@ public class Client{
 						//smsManager.sendTextMessage("92266801", null, smsString, null, null);
 						//smsManager.sendTextMessage("92230282", null, smsString, null, null);
 						//smsManager.sendTextMessage("94593932", null, smsString, null, null);
-						sms.sendSMS("92390354", msg + "\n\nThe time this SMS was sent is: " + sdf.format(new Date()));
+						sms.sendSMS("94593932", msg + "\n\nThe time this SMS was sent is: " + sdf.format(new Date()));
 				}
 				catch(IOException e) {
 					display("Server has close the connection: " + e);

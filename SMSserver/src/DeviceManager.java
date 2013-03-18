@@ -13,9 +13,8 @@ public class DeviceManager extends Thread{
 	private static int uniqueId;
 	private SimpleDateFormat sdf;
 	private SMSLog smsLog;
-	private boolean keepGoing;
-	
-	private int port;
+	private boolean keepGoing;// boolean to tell
+	private int port;//port the server runs on
 	
 	public DeviceManager (int port){
 		

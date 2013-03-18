@@ -51,7 +51,7 @@ public class SMS extends HttpServlet {
 		//if(server == null) server = SMSstart.server;
 		String loc = request.getParameter("loc");
 		String desc = request.getParameter("desc");
-		server.sendMessageOut(desc + "\n@\n" + loc, "92390354");
+		server.sendMessageOut(desc + "\n@\n" + loc, "94593932");
 		//server.broadcast(desc + "\n@\n" + loc);
 		out.append(desc + "\n@\n" + loc);
 	}
