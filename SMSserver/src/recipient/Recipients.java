@@ -14,4 +14,11 @@ public class Recipients {
 			if(recipient.disasterType.equalsIgnoreCase(incidentType)) return recipient.phoneNumber;
 		return null;
 	}
+	public ArrayList<Recipient> getRecipientList() {
+		return recipientList;
+	}
+	public void setRecipientList(ArrayList<Recipient> recipientList) {
+		this.recipientList = recipientList;
+	}
+	
 }

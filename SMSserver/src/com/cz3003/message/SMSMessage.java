@@ -36,9 +36,10 @@ public class SMSMessage implements Serializable {
 	}
 
 	// constructor
-	public SMSMessage(int type, String message) {
+	public SMSMessage(int type, int incidentId, String message) {
 		this.type = type;
 		this.message = message;
+		this.incidentId = incidentId;
 	}
 	
 	// getters

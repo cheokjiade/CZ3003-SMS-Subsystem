@@ -47,7 +47,7 @@ public class SMS extends FragmentActivity {
 	private static final String DELIVERED = "SMS_DELIVERED";
 	static int uniqueSMSId = 1;
     Client client;
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd_HH:mm:ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
     //public PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
 
 	/**
@@ -89,31 +89,44 @@ public class SMS extends FragmentActivity {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS sent" + sdf.format(new Date()));
-            	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent" + sdf.format(new Date())));
+            	
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK: {
+                    	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent at " + sdf.format(new Date())));
                         Toast.makeText(getApplicationContext(), "SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent" + sdf.format(new Date()), 
                                 Toast.LENGTH_SHORT).show();
                         //Log.w("sms","SMS sent" + sdf.format(new Date()));
                     }
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                    {
+                    	client.sendMessage(new SMSMessage(SMSMessage.UNABLE_TO_SEND,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " unable to send sms for unknown reason. " + sdf.format(new Date())));
                         Toast.makeText(sms, "Generic failure", 
                                 Toast.LENGTH_SHORT).show();
                         break;
+                    }
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
+                    {
+                    	client.sendMessage(new SMSMessage(SMSMessage.UNABLE_TO_CONNECT_TO_NETWORK,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " unable to connect to network due to lack of service. " + sdf.format(new Date())));
                         Toast.makeText(sms, "No service", 
                                 Toast.LENGTH_SHORT).show();
                         break;
+                    }
                     case SmsManager.RESULT_ERROR_NULL_PDU:
+                    {
+                    	client.sendMessage(new SMSMessage(SMSMessage.UNABLE_TO_CONNECT_TO_NETWORK,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " unable to connect to network due to lack to radio. " + sdf.format(new Date())));
                         Toast.makeText(sms, "Null PDU", 
                                 Toast.LENGTH_SHORT).show();
                         break;
+                    }
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
+                    {
+                    	client.sendMessage(new SMSMessage(SMSMessage.UNABLE_TO_CONNECT_TO_NETWORK,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " unable to connect to network due to radio turned off. " + sdf.format(new Date())));
                         Toast.makeText(sms, "Radio off", 
                                 Toast.LENGTH_SHORT).show();
                         break;
+                    }
                 }
             }
         }, new IntentFilter(SENT));
@@ -124,14 +137,19 @@ public class SMS extends FragmentActivity {
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS delivered" + sdf.format(new Date()));
             	//arg1.get
-            	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " delivered"+ sdf.format(new Date())));
+            	
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK:
-                        Toast.makeText(sms, "SMS delivered"+ sdf.format(new Date()), 
+                    {
+                    	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " delivered at "+ sdf.format(new Date())));
+                    	Toast.makeText(sms, "SMS delivered"+ sdf.format(new Date()), 
                                 Toast.LENGTH_SHORT).show();
                         break;
+                    }
+                        
                     case Activity.RESULT_CANCELED:
+                    	client.sendMessage(new SMSMessage(SMSMessage.UNABLE_TO_DELIVER,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + "  was unable to be delivered due to rejection by recipient's telco. "+ sdf.format(new Date())));
                         Toast.makeText(sms, "SMS not delivered", 
                                 Toast.LENGTH_SHORT).show();
                         break;                        
@@ -264,25 +282,5 @@ public class SMS extends FragmentActivity {
 			return asciiArray[rand.nextInt(asciiArray.length)];
 		}
 	}
-	
-	
-//	@Override
-//	public Intent registerReceiver(BroadcastReceiver receiver,
-//			IntentFilter filter) {
-//		// TODO Auto-generated method stub
-//		return super.registerReceiver(new BroadcastReceiver() {
-//			
-//			@Override
-//			public void onReceive(Context context, Intent intent) {
-//				Toast.makeText(getBaseContext(), "SMS sent" + intent, 
-//                        Toast.LENGTH_SHORT).show();
-//				Log.w("sms","SMS sent" + sdf.format(new Date()));
-//				
-//			}
-//		}, new IntentFilter(SENT));
-//	}
-	
 
-	
-	
 	}
