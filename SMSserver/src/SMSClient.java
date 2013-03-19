@@ -77,32 +77,9 @@ public class SMSClient extends Thread {
 					break;
 				}
 				// the messaage part of the ChatMessage
-				String message = cm.getMessage();
-				clientMessageReceived.onMessageReceived(uniqueId, message, cm.getType());
-				display(username + " " + message);
-				//display(username + " " + message);
-				// Switch on the type of message receive
-//				switch(cm.getType()) {
-//
-//				case SMSMessage.MESSAGE:
-//					//broadcast(username + ": " + message);
-//					//TODO received message from sms client, logic here
-//					clientMessageReceived.onMessageReceived(message, 0);
-//					display(username + " " + message);
-//					break;
-//				case SMSMessage.LOGOUT:
-//					//display(username + " disconnected with a LOGOUT message.");
-//					keepGoing = false;
-//					break;
-//				case SMSMessage.WHOISIN:
-//					writeMsg("List of the users connected at " + sdf.format(new Date()) + "\n");
-//					// scan al the users connected
-//					for(int i = 0; i < al.size(); ++i) {
-//						SMSClient ct = al.get(i);
-//						writeMsg((i+1) + ") " + ct.username + " since " + ct.date);
-//					}
-//					break;
-//				}
+				//String message = cm.getMessage();
+				clientMessageReceived.onMessageReceived(uniqueId, cm);
+				display(username + " " + cm.getMessage());
 			}
 			// remove myself from the arrayList containing the list of the
 			// connected Clients

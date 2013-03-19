@@ -2,11 +2,14 @@ import interfaces.ClientMessageReceived;
 
 import java.util.ArrayList;
 
+import com.cz3003.message.SMSMessage;
+
 import logs.SMSClientLog;
 
 
 public class SMSLog implements ClientMessageReceived{
 	private ArrayList<SMSClientLog> smsClientArrayList;// = new ArrayList<>();
+	
 	
 	public SMSLog() {
 		smsClientArrayList = new ArrayList<SMSClientLog>();
@@ -41,9 +44,13 @@ public class SMSLog implements ClientMessageReceived{
 	}
 
 	@Override
-	public void onMessageReceived(int uniqueId, String msg, int errorCode) {
+	public void onMessageReceived(int uniqueId, SMSMessage smsMessage) {
+		editClientScore(uniqueId, smsMessage);		
+	}
+	
+	public synchronized void editClientScore(int uniqueId, SMSMessage smsMessage){
 		SMSClientLog clientLog = selectClientsLog(uniqueId);
-		switch (errorCode) {
+		switch (smsMessage.getType()) {
 		case 0:
 		{
 			clientLog.setScore(clientLog.getScore()+50);
@@ -53,14 +60,18 @@ public class SMSLog implements ClientMessageReceived{
 		default:
 			break;
 		}
-		
 	}
 	
 	//public boolean
 	public SMSClientLog selectClientsLog(int uniqueId){
+		try{
 		for (SMSClientLog log : smsClientArrayList) 
 			if (log.getUniqueId() == uniqueId) return log;
 		return null;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 		
 	}
 }

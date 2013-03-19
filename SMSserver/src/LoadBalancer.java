@@ -1,9 +1,15 @@
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import recipient.Recipient;
+import recipient.Recipients;
+
 import com.cz3003.message.SMSMessage;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import logs.SMSClientLog;
 import logs.SMSLogEntry;
@@ -13,10 +19,12 @@ import logs.SMSLogEntry;
 public class LoadBalancer {
 	private DeviceManager dm;
 	private SMSLog smsLog;
+	private Recipients recipients;
 	
 	public LoadBalancer(){
 		dm = new DeviceManager(5832);
 		smsLog = dm.getSmsLog();
+		recipients = new Recipients();
 		//dm.start();
 		new Thread(new Runnable(){
 		    public void run()
@@ -69,22 +77,31 @@ public class LoadBalancer {
 		return true;
 	}
 	
-	public boolean updateRecipientList(){
+	public boolean updateRecipientList(String jsonString){
+		Type recipientListType = new TypeToken<ArrayList<Recipient>>() {}.getType();
+		Gson gson = new Gson();
+		ArrayList<Recipient> recipientList = gson.fromJson(jsonString, recipientListType);
+		for(Recipient r: recipientList)
+			System.out.println(r.disasterType + " " + r.phoneNumber);
+		recipients.setRecipientList(recipientList);
 		return true;
 	}
 	
-	public boolean sendErrorReport(){
+	public boolean sendErrorReport(SMSMessage smsMessage){
+		
 		return true;
 	}
 	
 	public static void main(String[]args){
 		LoadBalancer server = new LoadBalancer();
+		int someid=1;
+		server.updateRecipientList("[{\"disasterType\":\"TIFFANY\",\"phoneNumber\":\"92266801\"},{\"disasterType\":\"SRI\",\"phoneNumber\":\"81127957\"},{\"disasterType\":\"JUNE\",\"phoneNumber\":\"97368902\"}]");
 		Scanner scan = new Scanner(System.in);
-		System.out.print("Enter recipient phone number : ");
+		System.out.print("Enter recipient tiffany, sri, june : ");
 		String recipient = scan.nextLine();
 		while(true){
 			System.out.print("Enter message : ");
-			server.sendMessageOut(new SMSMessage(SMSMessage.MESSAGETOSMS, scan.nextLine(), 5, recipient));
+			server.sendMessageOut(new SMSMessage(SMSMessage.MESSAGETOSMS, scan.nextLine(), ++someid, server.recipients.selectNumberBasedOnIncidentType(recipient)));
 		}
 		
 	}

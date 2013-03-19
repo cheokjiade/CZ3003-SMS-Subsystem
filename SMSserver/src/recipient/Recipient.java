@@ -8,7 +8,7 @@ public class Recipient {
 	/**
 	 * Returns a Recipient object that contains the details of the recipient.
 	 *
-	 * @param  String agencyName The agency name. Will be matched to the disaster type provided when providing details to send an SMS.
+	 * @param  String disasterType The disaster type. Will be matched to the disaster type provided when providing details to send an SMS.
 	 * @param  String phoneNumber phone number of the recipient. May include country code for international numbers or not for local calls. Format is +65xxxxxxxx or xxxxxxxx.
 	 */
 	public Recipient(String disasterType, String phoneNumber) {
