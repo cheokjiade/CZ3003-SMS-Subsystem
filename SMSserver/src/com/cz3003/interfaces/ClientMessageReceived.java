@@ -1,4 +1,4 @@
-package interfaces;
+package com.cz3003.interfaces;
 
 import com.cz3003.message.SMSMessage;
 

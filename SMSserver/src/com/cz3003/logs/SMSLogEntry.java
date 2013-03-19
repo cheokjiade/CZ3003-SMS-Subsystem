@@ -1,4 +1,4 @@
-package logs;
+package com.cz3003.logs;
 
 import java.util.Date;
 

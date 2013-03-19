@@ -4,9 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import com.cz3003.message.SMSMessage;
-import com.cz3003.utils.DeviceUuidFactory;
-
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -14,23 +11,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.cz3003.message.SMSMessage;
+import com.cz3003.utils.DeviceUuidFactory;
 
 public class SMS extends FragmentActivity {
 
@@ -246,12 +243,12 @@ public class SMS extends FragmentActivity {
 			TextView textView = new TextView(getActivity());
 			textView.setGravity(Gravity.CENTER);
 			
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd_HH:mm:ss");
+			//SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd_HH:mm:ss");
 			//String currentDateandTime = sdf.format(new Date());
 			
-			SmsManager smsManager = SmsManager.getDefault();
+			//SmsManager smsManager = SmsManager.getDefault();
 			//darling
-			String smsString = createMsg(sdf);
+			//String smsString = createMsg(sdf);
 			//smsManager.sendTextMessage("97368902", null, smsString, null, null);
 			//lim guan
 			//smsManager.sendTextMessage("92230282", null, "Jia De loves June and...\nThe time this SMS was sent is: " + sdf.format(new Date()) + "\nPlease tell me how long it took you to receive. Or apps me.", null, null);
@@ -262,7 +259,7 @@ public class SMS extends FragmentActivity {
 			//tiffany
 			//smsManager.sendTextMessage("92266801", null, "Jia De loves June and...\nThe time this SMS was sent is: " + sdf.format(new Date()) + "\nPlease tell me how long it took you to receive. Or apps me.", null, null);
 			//textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-			textView.setText(smsString);
+			//textView.setText(smsString);
 			return textView;
 		}
 		

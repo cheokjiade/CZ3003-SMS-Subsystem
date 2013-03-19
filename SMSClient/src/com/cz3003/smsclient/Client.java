@@ -8,16 +8,8 @@ import java.util.*;
 
 import com.cz3003.message.SMSMessage;
 
-import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.nsd.NsdManager.RegistrationListener;
-import android.telephony.SmsManager;
 import android.util.Log;
-import android.widget.Toast;
+
 
 /*
  * The Client that can be run both as a console or a GUI

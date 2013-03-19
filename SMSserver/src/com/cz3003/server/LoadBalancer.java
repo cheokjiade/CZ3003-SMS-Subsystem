@@ -1,18 +1,19 @@
+package com.cz3003.server;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
-import recipient.Recipient;
-import recipient.Recipients;
 
+import com.cz3003.logs.SMSClientLog;
+import com.cz3003.logs.SMSLogEntry;
 import com.cz3003.message.SMSMessage;
+import com.cz3003.recipient.Recipient;
+import com.cz3003.recipient.Recipients;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import logs.SMSClientLog;
-import logs.SMSLogEntry;
 
 
 

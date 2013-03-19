@@ -1,10 +1,11 @@
-import interfaces.ClientMessageReceived;
+package com.cz3003.server;
 
 import java.util.ArrayList;
 
+import com.cz3003.interfaces.ClientMessageReceived;
+import com.cz3003.logs.SMSClientLog;
 import com.cz3003.message.SMSMessage;
 
-import logs.SMSClientLog;
 
 
 public class SMSLog implements ClientMessageReceived{

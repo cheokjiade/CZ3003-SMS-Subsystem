@@ -1,4 +1,4 @@
-package recipient;
+package com.cz3003.recipient;
 
 
 public class Recipient {

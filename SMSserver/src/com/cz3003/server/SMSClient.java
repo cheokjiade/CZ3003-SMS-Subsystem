@@ -1,4 +1,4 @@
-import interfaces.ClientMessageReceived;
+package com.cz3003.server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Date;
 
+import com.cz3003.interfaces.ClientMessageReceived;
 import com.cz3003.message.SMSMessage;
 
 

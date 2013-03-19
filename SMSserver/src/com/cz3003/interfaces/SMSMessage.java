@@ -1,4 +1,4 @@
-package interfaces;
+package com.cz3003.interfaces;
 
 import java.util.ArrayList;
 
@@ -67,9 +67,9 @@ public ArrayList<SMS> convertToSMS(String id, String type, String location, Stri
 	}
 	
 	
-	public static void main(String[] args){
-		SMSMessage message = new SMSMessage();
-		message.convertToSMS("1", "FIRE", "AMK AMK AMK AMK AMK AMK AMK  ", "12 noon", "info info info info info ","123123123", "Sunny", "123KM/h");
-		
-	}
+//	public static void main(String[] args){
+//		SMSMessage message = new SMSMessage();
+//		message.convertToSMS("1", "FIRE", "AMK AMK AMK AMK AMK AMK AMK  ", "12 noon", "info info info info info ","123123123", "Sunny", "123KM/h");
+//		
+//	}
 }
