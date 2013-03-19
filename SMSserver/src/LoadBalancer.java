@@ -1,4 +1,9 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Scanner;
+
+import com.cz3003.message.SMSMessage;
 
 import logs.SMSClientLog;
 import logs.SMSLogEntry;
@@ -22,9 +27,9 @@ public class LoadBalancer {
 		}).start();
 	}
 	
-	public boolean sendMessageOut(String msg, String no){
+	public boolean sendMessageOut(SMSMessage smsMessage){
 		SMSClient bestClient = chooseBestClient(dm.getSMSClients());
-		if(sendMessageToClient(bestClient, msg, no)==false){
+		if(sendMessageToClient(bestClient, smsMessage)==false){
 			//TODO no connected client. add to pending queue or something
 		}
 		else {
@@ -49,13 +54,39 @@ public class LoadBalancer {
 	}
 	
 	//TODO change msg and no to smsmessage object
-	public boolean sendMessageToClient(SMSClient client, String msg, String no){
+	public boolean sendMessageToClient(SMSClient client, SMSMessage smsMessage){
 		//when no connected client we cant send a message
 		if (client == null) return false;
 		//message was sent to client
-		if (client.writeMsg(msg)) return true;
+		if (client.writeMsg(smsMessage)) return true;
 		//call function
-		return sendMessageToClient(client, msg, no);
+		return sendMessageToClient(client, smsMessage);
+	}
+	
+	public boolean createMessageToSMS(int incidentId, String location, String type, String description, String callerNumber){
+		String messageContents = type + " @ " + location + "\nDescription: " + description + "\nReported by " + callerNumber + " @ " + (new SimpleDateFormat("HH:mm:ss")).format(new Date()) + "\nRef No.: " + incidentId;
+		SMSMessage smsMessage = new SMSMessage(SMSMessage.MESSAGETOSMS, messageContents, incidentId, callerNumber);
+		return true;
+	}
+	
+	public boolean updateRecipientList(){
+		return true;
+	}
+	
+	public boolean sendErrorReport(){
+		return true;
+	}
+	
+	public static void main(String[]args){
+		LoadBalancer server = new LoadBalancer();
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Enter recipient phone number : ");
+		String recipient = scan.nextLine();
+		while(true){
+			System.out.print("Enter message : ");
+			server.sendMessageOut(new SMSMessage(SMSMessage.MESSAGETOSMS, scan.nextLine(), 5, recipient));
+		}
+		
 	}
 	
 }

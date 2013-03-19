@@ -76,8 +76,8 @@ public class SMS extends FragmentActivity {
 		    public void run()
 		    {
 		    	DeviceUuidFactory uuid = new DeviceUuidFactory(getApplicationContext());
-		    	client = new Client("192.168.1.5", 5832, uuid.getDeviceUuid().toString(),sms);
-				client.start();
+		    	client = new Client("172.22.98.203", 5832, uuid.getDeviceUuid().toString(),sms);
+				client.connect();
 		    }
 		}).start();
 		Toast.makeText(getBaseContext(), "Test", Toast.LENGTH_SHORT).show();
@@ -139,24 +139,21 @@ public class SMS extends FragmentActivity {
             }
         }, new IntentFilter(DELIVERED));    
 	}
-	public void sendSMS(String phoneNumber, String message)
-    {        
-        //String SENT = "SMS_SENT";
-        //String DELIVERED = "SMS_DELIVERED";
+	
+	public void sendSMS(SMSMessage smsMessage){        
         Intent sentIntent = new Intent(SENT);
         Intent deliveredIntent = new Intent(DELIVERED);
-        sentIntent.putExtra("com.cz3003.smsclient.smsid", uniqueSMSId);
-        deliveredIntent.putExtra("com.cz3003.smsclient.smsid", uniqueSMSId);
-        PendingIntent sentPI = PendingIntent.getBroadcast(this, uniqueSMSId,
+        
+        sentIntent.putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
+        deliveredIntent.putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
+        
+        PendingIntent sentPI = PendingIntent.getBroadcast(this, uniqueSMSId%50,
         		sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
- 
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, uniqueSMSId,
+        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, uniqueSMSId%50,
         		deliveredIntent, PendingIntent.FLAG_UPDATE_CURRENT);
- 
-            
- 
+        
         SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+        sms.sendTextMessage(smsMessage.getRecipient(), null, smsMessage.getMessage(), sentPI, deliveredPI);
         uniqueSMSId++;
     }
 

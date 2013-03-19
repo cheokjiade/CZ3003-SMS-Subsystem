@@ -130,7 +130,7 @@ public class SMSClient extends Thread {
 		/*
 		 * Write a String to the Client output stream
 		 */
-		public boolean writeMsg(String msg) {
+		public boolean writeMsg(SMSMessage msg) {
 			// if Client is still connected send the message to it
 			if(!socket.isConnected()) {
 				close();

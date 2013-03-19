@@ -23,9 +23,18 @@ public class SMSMessage implements Serializable {
 	public static final int MESSAGETOSMS = 5; // server sends a message to device
 	private int type; //for the types above
 	private String message; // the message
-	private String incidentId; // the incident id to map to
-	private String recipient;
+	private int incidentId; // the incident id to map to
+	private String recipient; // phone number for the message
 	
+	public SMSMessage(int type, String message, int incidentId,
+			String recipient) {
+		super();
+		this.type = type;
+		this.message = message;
+		this.incidentId = incidentId;
+		this.recipient = recipient;
+	}
+
 	// constructor
 	public SMSMessage(int type, String message) {
 		this.type = type;
@@ -38,6 +47,14 @@ public class SMSMessage implements Serializable {
 	}
 	public String getMessage() {
 		return message;
+	}
+
+	public int getIncidentId() {
+		return incidentId;
+	}
+
+	public String getRecipient() {
+		return recipient;
 	}
 }
 

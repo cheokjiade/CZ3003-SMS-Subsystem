@@ -119,4 +119,6 @@ public class DeviceManager extends Thread{
 		this.port = port;
 	}
 	
+
+	
 }
