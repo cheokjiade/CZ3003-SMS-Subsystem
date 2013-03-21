@@ -14,6 +14,7 @@ import com.cz3003.logs.SMSLogEntry;
 import com.cz3003.message.CPUMessage;
 import com.cz3003.message.MessageLinkController;
 import com.cz3003.message.SMSMessage;
+import com.cz3003.recipient.AgencyNumbers;
 import com.cz3003.recipient.Recipient;
 import com.cz3003.recipient.Recipients;
 import com.google.gson.Gson;
@@ -26,7 +27,7 @@ public class LoadBalancer {
 	private SMSLog smsLog;
 	private Recipients recipients;
 	private MessageLinkController messageController;
-	private static SMSServer sms;
+	private SMSServer sms;
 	private ErrorClient errorClient;
 	public LoadBalancer(){
 		messageController = new MessageLinkController();
@@ -94,11 +95,13 @@ public class LoadBalancer {
 	}
 	
 	public boolean updateRecipientList(String jsonString){
-		Type recipientListType = new TypeToken<ArrayList<Recipient>>() {}.getType();
-		Gson gson = new Gson();
-		ArrayList<Recipient> recipientList = gson.fromJson(jsonString, recipientListType);
-		for(Recipient r: recipientList)
-			System.out.println(r.disasterType + " " + r.phoneNumber);
+		ArrayList<AgencyNumbers> recipientList = new ArrayList<AgencyNumbers>();
+		recipientList.add(new AgencyNumbers("SCDF", "97368902", "FIRE"));
+//		Type recipientListType = new TypeToken<ArrayList<Recipient>>() {}.getType();
+//		Gson gson = new Gson();
+//		ArrayList<Recipient> recipientList = gson.fromJson(jsonString, recipientListType);
+//		for(Recipient r: recipientList)
+//			System.out.println(r.disasterType + " " + r.phoneNumber);
 		recipients.setRecipientList(recipientList);
 		return true;
 	}
@@ -113,20 +116,21 @@ public class LoadBalancer {
 //            System.setSecurityManager(new RMISecurityManager());
 //        }
 		LoadBalancer server = new LoadBalancer();
-//		try {
-            //sms = new SMSServer();
-//            java.rmi.Naming.rebind("SMS", sms);
-//            System.out.println("Server Ready");
-//        } catch (RemoteException RE) {
-//            System.out.println("Remote Server Error:" + RE.getMessage());
-//            System.exit(0);
-//        } catch (MalformedURLException ME) {
-//            System.out.println("Invalid URL!!");
-//        }
+		try {
+			SMSServer sms = new SMSServer();
+			sms.setLoadBalancer(server);
+            java.rmi.Naming.rebind("SMS", sms);
+            System.out.println("Server Ready");
+        } catch (RemoteException RE) {
+            System.out.println("Remote Server Error:" + RE.getMessage());
+            System.exit(0);
+        } catch (MalformedURLException ME) {
+            System.out.println("Invalid URL!!");
+        }
 		int someid=1;
-		server.updateRecipientList("[{\"disasterType\":\"TIFFANY\",\"phoneNumber\":\"97374214\"},{\"disasterType\":\"SRI\",\"phoneNumber\":\"81127957\"},{\"disasterType\":\"JUNE\",\"phoneNumber\":\"97368902\"}]");
+		//server.updateRecipientList("[{\"disasterType\":\"TIFFANY\",\"phoneNumber\":\"97374214\"},{\"disasterType\":\"SRI\",\"phoneNumber\":\"81127957\"},{\"disasterType\":\"JUNE\",\"phoneNumber\":\"97368902\"}]");
 		Scanner scan = new Scanner(System.in);
-		System.out.print("Enter recipient tiffany, sri, june : ");
+		System.out.print("Enter recipient june : ");
 		String recipient = scan.nextLine();
 		while(true){
 			System.out.print("Enter message : ");

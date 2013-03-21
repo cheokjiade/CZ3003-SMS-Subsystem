@@ -7,6 +7,8 @@ package com.cz3003.interfaces;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.cz3003.recipient.AgencyNumbers;
+
 /**
  *
  * @author Ben
@@ -14,5 +16,5 @@ import java.util.Date;
 public interface ISMS {
 
     public void sendErrorReport(Date timeStamp, String incidentName, String location, String type, double longitude, double latitude, String description, int severity, String callno, int errorCode, String errorDescription);
-    public ArrayList</*AgencyNumbers*/String> sendAgencyNumbers();
+    public ArrayList<AgencyNumbers> sendAgencyNumbers();
 }
