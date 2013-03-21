@@ -7,7 +7,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-
+/**
+ * 
+ * @author Jia De
+ *
+ */
 public class DeviceManager extends Thread{
 	
 	private ArrayList<SMSClient> smsClientArrayList;

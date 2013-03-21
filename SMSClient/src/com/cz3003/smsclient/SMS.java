@@ -1,6 +1,7 @@
 package com.cz3003.smsclient;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
@@ -45,6 +46,7 @@ public class SMS extends FragmentActivity {
 	static int uniqueSMSId = 1;
     Client client;
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+    ArrayList<SMSMessage> messageList = new ArrayList<SMSMessage>();
     //public PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
 
 	/**
@@ -73,7 +75,7 @@ public class SMS extends FragmentActivity {
 		    public void run()
 		    {
 		    	DeviceUuidFactory uuid = new DeviceUuidFactory(getApplicationContext());
-		    	client = new Client("172.22.98.203", 5832, uuid.getDeviceUuid().toString(),sms);
+		    	client = new Client("172.22.67.81", 5832, uuid.getDeviceUuid().toString(),sms);
 				client.connect();
 		    }
 		}).start();
@@ -86,11 +88,23 @@ public class SMS extends FragmentActivity {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS sent" + sdf.format(new Date()));
-            	
+            	SMSMessage message=null;
+            	for(SMSMessage tempMessage:messageList){
+            		if(tempMessage.getIncidentId()==arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)){
+            			message= tempMessage;
+            			break;
+            		}return;
+            	}
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK: {
-                    	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent at " + sdf.format(new Date())));
+                    	if(message!=null&&message.getOthers()==0){
+                    		client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent at " + sdf.format(new Date())));
+                    		messageList.remove(message);
+                    	}else if(message!=null){
+                    		message.setOthers(message.getOthers()-1);
+                    	}
+                    	
                         Toast.makeText(getApplicationContext(), "SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent" + sdf.format(new Date()), 
                                 Toast.LENGTH_SHORT).show();
                         //Log.w("sms","SMS sent" + sdf.format(new Date()));
@@ -133,13 +147,25 @@ public class SMS extends FragmentActivity {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
             	Log.w("sms","SMS delivered" + sdf.format(new Date()));
-            	//arg1.get
+            	SMSMessage message=null;
+            	for(SMSMessage tempMessage:messageList){
+            		if(tempMessage.getIncidentId()==arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)){
+            			message= tempMessage;
+            			break;
+            		}return;
+            	}
             	
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK:
                     {
-                    	client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " delivered at "+ sdf.format(new Date())));
+                    	if(message!=null&&message.getOthers()==0){
+                    		client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " delivered at "+ sdf.format(new Date())));
+                    		messageList.remove(message);
+                    	}else if(message!=null){
+                    		message.setOthers(message.getOthers()-1);
+                    	}
+                    	
                     	Toast.makeText(sms, "SMS delivered"+ sdf.format(new Date()), 
                                 Toast.LENGTH_SHORT).show();
                         break;
@@ -155,20 +181,41 @@ public class SMS extends FragmentActivity {
         }, new IntentFilter(DELIVERED));    
 	}
 	
-	public void sendSMS(SMSMessage smsMessage){        
-        Intent sentIntent = new Intent(SENT);
-        Intent deliveredIntent = new Intent(DELIVERED);
+	public void sendSMS(SMSMessage smsMessage){  
+		messageList.add(smsMessage);
+		SmsManager sms = SmsManager.getDefault();
+        Intent sentIntent = new Intent(SENT).putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
+        Intent deliveredIntent = new Intent(DELIVERED).putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
         
-        sentIntent.putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
-        deliveredIntent.putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
+        //sentIntent.putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
+        //deliveredIntent.putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
         
         PendingIntent sentPI = PendingIntent.getBroadcast(this, uniqueSMSId%50,
         		sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent deliveredPI = PendingIntent.getBroadcast(this, uniqueSMSId%50,
         		deliveredIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if(smsMessage.getMessage().length()>160){
+        	
+        	ArrayList<String> parts = sms.divideMessage(smsMessage.getMessage());
+        	ArrayList<PendingIntent> sentList = new ArrayList<PendingIntent>();
+        	ArrayList<PendingIntent> receivedList = new ArrayList<PendingIntent>();
+        	
+        	for(int i =0;i<(int)Math.ceil(smsMessage.getMessage().length()/160.0);i++){
+        		sentList.add(PendingIntent.getBroadcast(this, (uniqueSMSId%50)+50,
+        		deliveredIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        		receivedList.add(PendingIntent.getBroadcast(this, (uniqueSMSId%50)+50,
+                		deliveredIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        	}
+        	smsMessage.setOthers((int)Math.ceil(smsMessage.getMessage().length()/160.0));
+        	sms.sendMultipartTextMessage(smsMessage.getRecipient(), null, parts, sentList, receivedList);
+        	
+        }else{
+        	smsMessage.setOthers(0);
+        	sms.sendTextMessage(smsMessage.getRecipient(), null, smsMessage.getMessage(), sentPI, deliveredPI);
+        	
+        }
         
-        SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(smsMessage.getRecipient(), null, smsMessage.getMessage(), sentPI, deliveredPI);
+        
         uniqueSMSId++;
     }
 

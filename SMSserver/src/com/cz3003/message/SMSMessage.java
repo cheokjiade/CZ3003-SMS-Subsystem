@@ -25,6 +25,7 @@ public class SMSMessage implements Serializable {
 	private String message; // the message
 	private int incidentId; // the incident id to map to
 	private String recipient; // phone number for the message
+	private int others;
 	
 	public SMSMessage(int type, String message, int incidentId,
 			String recipient) {
@@ -56,6 +57,14 @@ public class SMSMessage implements Serializable {
 
 	public String getRecipient() {
 		return recipient;
+	}
+
+	public int getOthers() {
+		return others;
+	}
+
+	public void setOthers(int others) {
+		this.others = others;
 	}
 }
 

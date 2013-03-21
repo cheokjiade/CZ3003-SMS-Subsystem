@@ -13,10 +13,9 @@ import com.cz3003.recipient.Recipient;
 import com.cz3003.recipient.Recipients;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-
-
-
+/*
+ * @author Cheok Jia De
+ */
 public class LoadBalancer {
 	private DeviceManager dm;
 	private SMSLog smsLog;

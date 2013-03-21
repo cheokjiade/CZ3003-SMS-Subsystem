@@ -1,7 +1,12 @@
 package com.cz3003.interfaces;
 
 import com.cz3003.message.SMSMessage;
-
+/**
+ * 
+ * @author Cheok Jia De
+ * onMessageReceived(int uniqueId, SMSMessage smsMessage) will be called when a message has been received from a client.
+ *
+ */
 public interface ClientMessageReceived {
 	public static final int SUCCESS = 0;
 	public static final int UNABLE_TO_SEND = 1;

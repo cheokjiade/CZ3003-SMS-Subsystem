@@ -1,7 +1,11 @@
 package com.cz3003.recipient;
 
 import java.util.ArrayList;
-
+/**
+ * 
+ * @author Wei Leng
+ *
+ */
 public class Recipients {
 	private ArrayList<Recipient> recipientList;
 

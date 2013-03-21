@@ -9,7 +9,11 @@ import java.util.Date;
 import com.cz3003.interfaces.ClientMessageReceived;
 import com.cz3003.message.SMSMessage;
 
-
+/**
+ * 
+ * @author Tiffany 
+ *
+ */
 public class SMSClient extends Thread {
 		// the socket where to listen/talk
 		Socket socket;
