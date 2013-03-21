@@ -147,6 +147,7 @@ public class Client{
 			while(true) {
 				try {
 					SMSMessage msg = (SMSMessage) sInput.readObject();
+					Log.w("msg", msg.getMessage());
 					sms.sendSMS(msg);
 				}
 				catch(IOException e) {

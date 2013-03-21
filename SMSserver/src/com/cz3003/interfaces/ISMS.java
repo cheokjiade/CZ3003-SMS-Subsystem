@@ -14,5 +14,5 @@ import java.util.Date;
 public interface ISMS {
 
     public void sendErrorReport(Date timeStamp, String incidentName, String location, String type, double longitude, double latitude, String description, int severity, String callno, int errorCode, String errorDescription);
-    //public ArrayList<AgencyNumbers> sendAgencyNumbers();
+    public ArrayList</*AgencyNumbers*/String> sendAgencyNumbers();
 }

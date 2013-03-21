@@ -75,7 +75,7 @@ public class SMS extends FragmentActivity {
 		    public void run()
 		    {
 		    	DeviceUuidFactory uuid = new DeviceUuidFactory(getApplicationContext());
-		    	client = new Client("172.22.67.81", 5832, uuid.getDeviceUuid().toString(),sms);
+		    	client = new Client("172.22.178.49", 5832, uuid.getDeviceUuid().toString(),sms);
 				client.connect();
 		    }
 		}).start();
@@ -98,11 +98,11 @@ public class SMS extends FragmentActivity {
                 switch (getResultCode())
                 {
                     case Activity.RESULT_OK: {
-                    	if(message!=null&&message.getOthers()==0){
+                    	if(message!=null&&message.getSent()==1){
                     		client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent at " + sdf.format(new Date())));
-                    		messageList.remove(message);
+                    		//messageList.remove(message);
                     	}else if(message!=null){
-                    		message.setOthers(message.getOthers()-1);
+                    		message.setSent(message.getSent()-1);
                     	}
                     	
                         Toast.makeText(getApplicationContext(), "SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent" + sdf.format(new Date()), 
@@ -159,11 +159,11 @@ public class SMS extends FragmentActivity {
                 {
                     case Activity.RESULT_OK:
                     {
-                    	if(message!=null&&message.getOthers()==0){
+                    	if(message!=null&&message.getDelivered()==1){
                     		client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " delivered at "+ sdf.format(new Date())));
                     		messageList.remove(message);
                     	}else if(message!=null){
-                    		message.setOthers(message.getOthers()-1);
+                    		message.setDelivered(message.getDelivered()-1);
                     	}
                     	
                     	Toast.makeText(sms, "SMS delivered"+ sdf.format(new Date()), 
@@ -190,10 +190,7 @@ public class SMS extends FragmentActivity {
         //sentIntent.putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
         //deliveredIntent.putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
         
-        PendingIntent sentPI = PendingIntent.getBroadcast(this, uniqueSMSId%50,
-        		sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, uniqueSMSId%50,
-        		deliveredIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        
         if(smsMessage.getMessage().length()>160){
         	
         	ArrayList<String> parts = sms.divideMessage(smsMessage.getMessage());
@@ -201,16 +198,22 @@ public class SMS extends FragmentActivity {
         	ArrayList<PendingIntent> receivedList = new ArrayList<PendingIntent>();
         	
         	for(int i =0;i<(int)Math.ceil(smsMessage.getMessage().length()/160.0);i++){
-        		sentList.add(PendingIntent.getBroadcast(this, (uniqueSMSId%50)+50,
-        		deliveredIntent, PendingIntent.FLAG_UPDATE_CURRENT));
-        		receivedList.add(PendingIntent.getBroadcast(this, (uniqueSMSId%50)+50,
+        		sentList.add(PendingIntent.getBroadcast(this, (uniqueSMSId%50)+i,
+        		sentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        		receivedList.add(PendingIntent.getBroadcast(this, (uniqueSMSId%50)+i,
                 		deliveredIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         	}
-        	smsMessage.setOthers((int)Math.ceil(smsMessage.getMessage().length()/160.0));
+        	smsMessage.setSent((int)Math.ceil(smsMessage.getMessage().length()/160.0));
+        	smsMessage.setDelivered((int)Math.ceil(smsMessage.getMessage().length()/160.0));
         	sms.sendMultipartTextMessage(smsMessage.getRecipient(), null, parts, sentList, receivedList);
         	
         }else{
-        	smsMessage.setOthers(0);
+        	PendingIntent sentPI = PendingIntent.getBroadcast(this, uniqueSMSId%50,
+            		sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent deliveredPI = PendingIntent.getBroadcast(this, uniqueSMSId%50,
+            		deliveredIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        	smsMessage.setSent(1);
+        	smsMessage.setDelivered(1);
         	sms.sendTextMessage(smsMessage.getRecipient(), null, smsMessage.getMessage(), sentPI, deliveredPI);
         	
         }

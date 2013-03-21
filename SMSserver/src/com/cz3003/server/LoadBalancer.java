@@ -1,5 +1,8 @@
 package com.cz3003.server;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.rmi.RMISecurityManager;
+import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,6 +11,8 @@ import java.util.Scanner;
 
 import com.cz3003.logs.SMSClientLog;
 import com.cz3003.logs.SMSLogEntry;
+import com.cz3003.message.CPUMessage;
+import com.cz3003.message.MessageLinkController;
 import com.cz3003.message.SMSMessage;
 import com.cz3003.recipient.Recipient;
 import com.cz3003.recipient.Recipients;
@@ -20,8 +25,11 @@ public class LoadBalancer {
 	private DeviceManager dm;
 	private SMSLog smsLog;
 	private Recipients recipients;
-	
+	private MessageLinkController messageController;
+	private static SMSServer sms;
+	private ErrorClient errorClient;
 	public LoadBalancer(){
+		messageController = new MessageLinkController();
 		dm = new DeviceManager(5832);
 		smsLog = dm.getSmsLog();
 		recipients = new Recipients();
@@ -35,10 +43,13 @@ public class LoadBalancer {
 		}).start();
 	}
 	
-	public boolean sendMessageOut(SMSMessage smsMessage){
+	public boolean sendMessageOut(SMSMessage smsMessage, CPUMessage cpuMessage){
 		SMSClient bestClient = chooseBestClient(dm.getSMSClients());
 		if(sendMessageToClient(bestClient, smsMessage)==false){
 			//TODO no connected client. add to pending queue or something
+			//TODO send error message to CPU
+			System.out.println("error");
+			
 		}
 		else {
 			SMSClientLog clientLog = smsLog.selectClientsLog(bestClient.getUniqueId());
@@ -77,6 +88,11 @@ public class LoadBalancer {
 		return true;
 	}
 	
+	public boolean createMessageToSMS(CPUMessage cpuMessage){
+		
+		return true;
+	}
+	
 	public boolean updateRecipientList(String jsonString){
 		Type recipientListType = new TypeToken<ArrayList<Recipient>>() {}.getType();
 		Gson gson = new Gson();
@@ -93,9 +109,22 @@ public class LoadBalancer {
 	}
 	
 	public static void main(String[]args){
+//		if (System.getSecurityManager() == null) {
+//            System.setSecurityManager(new RMISecurityManager());
+//        }
 		LoadBalancer server = new LoadBalancer();
+//		try {
+            //sms = new SMSServer();
+//            java.rmi.Naming.rebind("SMS", sms);
+//            System.out.println("Server Ready");
+//        } catch (RemoteException RE) {
+//            System.out.println("Remote Server Error:" + RE.getMessage());
+//            System.exit(0);
+//        } catch (MalformedURLException ME) {
+//            System.out.println("Invalid URL!!");
+//        }
 		int someid=1;
-		server.updateRecipientList("[{\"disasterType\":\"TIFFANY\",\"phoneNumber\":\"92266801\"},{\"disasterType\":\"SRI\",\"phoneNumber\":\"81127957\"},{\"disasterType\":\"JUNE\",\"phoneNumber\":\"97368902\"}]");
+		server.updateRecipientList("[{\"disasterType\":\"TIFFANY\",\"phoneNumber\":\"97374214\"},{\"disasterType\":\"SRI\",\"phoneNumber\":\"81127957\"},{\"disasterType\":\"JUNE\",\"phoneNumber\":\"97368902\"}]");
 		Scanner scan = new Scanner(System.in);
 		System.out.print("Enter recipient tiffany, sri, june : ");
 		String recipient = scan.nextLine();
@@ -103,6 +132,24 @@ public class LoadBalancer {
 			System.out.print("Enter message : ");
 			server.sendMessageOut(new SMSMessage(SMSMessage.MESSAGETOSMS, scan.nextLine(), ++someid, server.recipients.selectNumberBasedOnIncidentType(recipient)));
 		}
+		
+	}
+
+	private void sendMessageOut(SMSMessage smsMessage) {
+		SMSClient bestClient = chooseBestClient(dm.getSMSClients());
+		if(sendMessageToClient(bestClient, smsMessage)==false){
+			//TODO no connected client. add to pending queue or something
+			//TODO send error message to CPU
+			System.out.println("error");
+			
+		}
+		else {
+			SMSClientLog clientLog = smsLog.selectClientsLog(bestClient.getUniqueId());
+			clientLog.getSmsLogEntryArrayList().add(new SMSLogEntry("Message sent to device", SMSLogEntry.MESSAGESENT));
+			clientLog.setScore(clientLog.getScore()-50);
+		}
+			
+		//return true;
 		
 	}
 	
