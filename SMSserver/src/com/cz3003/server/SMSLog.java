@@ -61,7 +61,7 @@ public class SMSLog implements ClientMessageReceived{
 			if(clientLog.getUniqueId()==id)	return;
 		smsClientArrayList.add(new SMSClientLog(id));
 	}
-
+	
 	@Override
 	public void onMessageReceived(int uniqueId, SMSMessage smsMessage) {
 		editClientScore(uniqueId, smsMessage);		
