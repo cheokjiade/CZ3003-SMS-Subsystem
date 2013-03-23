@@ -5,10 +5,13 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.cz3003.server.LoadBalancer;
+
 public class LoadBalancerTest {
 
 	@Before
 	public void setUp() throws Exception {
+		LoadBalancer server = new LoadBalancer();
 	}
 
 	@Test

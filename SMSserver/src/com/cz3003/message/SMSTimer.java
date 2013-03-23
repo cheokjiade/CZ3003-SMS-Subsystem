@@ -25,6 +25,11 @@ public class SMSTimer {
         timer = new Timer();
         timer.schedule(timerz, seconds*1000);
 	}
+    
+    public boolean cancelTimer(){
+    	timerz.toTerminate();
+    	return true;
+    }
 
     class Timerz extends TimerTask {
         public void run() {
