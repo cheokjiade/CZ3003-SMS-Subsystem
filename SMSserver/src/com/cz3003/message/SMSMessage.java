@@ -1,7 +1,7 @@
 package com.cz3003.message;
 
 import java.io.*;
-/*
+/**
  * This class defines the different type of messages that will be exchanged between the
  * Clients and the Server. 
  * When talking from a Java Client to a Java Server a lot easier to pass Java objects, no 
@@ -11,11 +11,8 @@ public class SMSMessage implements Serializable {
 
 	protected static final long serialVersionUID = 1112122200L;
 
-	// The different types of message sent by the Client
-	// WHOISIN to receive the list of the users connected
-	// MESSAGE an ordinary message
-	// LOGOUT to disconnect from the Server
-	public static final int SUCCESS = 0;//SMS was delivered
+	public static final int SENT = 7;//SMS was sent
+	public static final int DELIVERED = 6;//SMS was delivered
 	public static final int UNABLE_TO_SEND = 1; //unable to send to telco
 	public static final int UNABLE_TO_DELIVER = 2; //send to telco but cannot deliver to recipient
 	public static final int UNABLE_TO_CONNECT_TO_NETWORK = 3; // device cannot connect to network

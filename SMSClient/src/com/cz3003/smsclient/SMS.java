@@ -75,7 +75,7 @@ public class SMS extends FragmentActivity {
 		    public void run()
 		    {
 		    	DeviceUuidFactory uuid = new DeviceUuidFactory(getApplicationContext());
-		    	client = new Client("172.22.178.49", 5832, uuid.getDeviceUuid().toString(),sms);
+		    	client = new Client("192.168.1.5", 5832, uuid.getDeviceUuid().toString(),sms);
 				client.connect();
 		    }
 		}).start();
@@ -99,7 +99,7 @@ public class SMS extends FragmentActivity {
                 {
                     case Activity.RESULT_OK: {
                     	if(message!=null&&message.getSent()==1){
-                    		client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent at " + sdf.format(new Date())));
+                    		client.sendMessage(new SMSMessage(SMSMessage.SENT,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent at " + sdf.format(new Date())));
                     		//messageList.remove(message);
                     	}else if(message!=null){
                     		message.setSent(message.getSent()-1);
@@ -160,7 +160,7 @@ public class SMS extends FragmentActivity {
                     case Activity.RESULT_OK:
                     {
                     	if(message!=null&&message.getDelivered()==1){
-                    		client.sendMessage(new SMSMessage(SMSMessage.SUCCESS,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " delivered at "+ sdf.format(new Date())));
+                    		client.sendMessage(new SMSMessage(SMSMessage.DELIVERED,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " delivered at "+ sdf.format(new Date())));
                     		messageList.remove(message);
                     	}else if(message!=null){
                     		message.setDelivered(message.getDelivered()-1);

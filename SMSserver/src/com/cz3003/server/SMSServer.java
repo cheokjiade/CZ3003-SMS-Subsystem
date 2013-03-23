@@ -11,16 +11,13 @@ import java.rmi.*;
 import java.util.ArrayList;
 
 import com.cz3003.interfaces.ISMS;
+import com.cz3003.interfaces.SMSInterface;
 import com.cz3003.message.CPUMessage;
 import com.cz3003.recipient.AgencyNumbers;
 
 
 
-interface SMSInterface extends Remote {
 
-    public void sendOutSMS(String incidentName, String location, String type, double longtitude, double latitude, Date timeStamp, String description, int severity, String callno) throws RemoteException;
-
-}
 
 public class SMSServer extends UnicastRemoteObject implements SMSInterface {
 
@@ -29,9 +26,10 @@ public class SMSServer extends UnicastRemoteObject implements SMSInterface {
 	 */
 	private static final long serialVersionUID = 7399499986439982894L;
 	private LoadBalancer loadBalancer;
-    public SMSServer() throws RemoteException {
+    public SMSServer(LoadBalancer loadBalancer) throws RemoteException {
         System.out.println("Initializing Server");
-        //this.loadBalancer = loadBalancer;
+        //java.rmi.Naming.rebind("SMS", this);
+        this.loadBalancer = loadBalancer;
         
     }
 

@@ -51,7 +51,14 @@ public class SMSLog implements ClientMessageReceived{
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * Adds a new log for a client id. If exists, nothing is done.
+	 */
 	public void addClient(int id){
+		for (SMSClientLog clientLog: smsClientArrayList)
+			if(clientLog.getUniqueId()==id)	return;
 		smsClientArrayList.add(new SMSClientLog(id));
 	}
 
@@ -59,11 +66,16 @@ public class SMSLog implements ClientMessageReceived{
 	public void onMessageReceived(int uniqueId, SMSMessage smsMessage) {
 		editClientScore(uniqueId, smsMessage);		
 	}
-
+	/**
+	 * 
+	 * @param uniqueId
+	 * @param smsMessage
+	 * edits the score of a client.
+	 */
 	public synchronized void editClientScore(int uniqueId, SMSMessage smsMessage){
 		SMSClientLog clientLog = selectClientsLog(uniqueId);
 		switch (smsMessage.getType()) {
-		case 0:
+		case SMSMessage.DELIVERED:
 		{
 			clientLog.setScore(clientLog.getScore()+50);
 		}
@@ -85,5 +97,11 @@ public class SMSLog implements ClientMessageReceived{
 			return null;
 		}
 
+	}
+	public ArrayList<SMSClientLog> getSmsClientArrayList() {
+		return smsClientArrayList;
+	}
+	public void setSmsClientArrayList(ArrayList<SMSClientLog> smsClientArrayList) {
+		this.smsClientArrayList = smsClientArrayList;
 	}
 }
