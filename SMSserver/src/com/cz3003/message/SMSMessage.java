@@ -6,11 +6,14 @@ import java.io.*;
  * Clients and the Server. 
  * When talking from a Java Client to a Java Server a lot easier to pass Java objects, no 
  * need to count bytes or to wait for a line feed at the end of the frame
+ * @author June and Jia De
  */
 public class SMSMessage implements Serializable {
 
 	protected static final long serialVersionUID = 1112122200L;
-
+	/**
+	 * SMS was sent
+	 */
 	public static final int SENT = 7;//SMS was sent
 	public static final int DELIVERED = 6;//SMS was delivered
 	public static final int UNABLE_TO_SEND = 1; //unable to send to telco
@@ -22,9 +25,9 @@ public class SMSMessage implements Serializable {
 	private String message; // the message
 	private int incidentId; // the incident id to map to
 	private String recipient; // phone number for the message
-	private int sent;
-	private int delivered;
-	
+	private int sent; //counter for multipart sms
+	private int delivered; //counter for multipart sms
+	//for sending from server to client
 	public SMSMessage(int type, String message, int incidentId,
 			String recipient) {
 		super();
@@ -34,7 +37,7 @@ public class SMSMessage implements Serializable {
 		this.recipient = recipient;
 	}
 
-	// constructor
+	// constructor for sending from cleint to serber
 	public SMSMessage(int type, int incidentId, String message) {
 		this.type = type;
 		this.message = message;
