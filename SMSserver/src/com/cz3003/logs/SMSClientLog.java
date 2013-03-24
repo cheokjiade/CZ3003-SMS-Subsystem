@@ -1,11 +1,20 @@
 package com.cz3003.logs;
 
 import java.util.ArrayList;
-
+/**
+ * 
+ * @author Jia De & June
+ *
+ */
 public class SMSClientLog {
 	private int score;
 	private int uniqueId;
 	private ArrayList<SMSLogEntry> smsLogEntryArrayList;
+	
+	/**
+	 * 
+	 * @param uniqueId client id.
+	 */
 	public SMSClientLog (int uniqueId) {
 		this.uniqueId = uniqueId;
 		smsLogEntryArrayList = new ArrayList<SMSLogEntry>();

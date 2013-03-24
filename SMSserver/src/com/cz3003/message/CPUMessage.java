@@ -1,7 +1,11 @@
 package com.cz3003.message;
 
 import java.util.Date;
-
+/**
+ * An object that contains message CPU sent to SMS SubSystem.
+ * @author Jia De and June
+ *
+ */
 public class CPUMessage {
 	Date timeStamp; 
 	String incidentName;
@@ -14,6 +18,21 @@ public class CPUMessage {
 	String callno; 
 	int errorCode; 
 	String errorDescription;
+	
+	/**
+	 * 
+	 * @param timeStamp time CPU sends a message.
+	 * @param incidentName name of an incident.
+	 * @param location incident location.
+	 * @param type type of an incident.
+	 * @param longitude longitude.
+	 * @param latitude latitude.
+	 * @param description incident's description.
+	 * @param severity severity of an incident.
+	 * @param callno caller's contact number.
+	 * @param errorCode error code.
+	 * @param errorDescription description of an error.
+	 */
 	public CPUMessage(Date timeStamp, String incidentName, String location,
 			String type, double longitude, double latitude, String description,
 			int severity, String callno, int errorCode, String errorDescription) {
