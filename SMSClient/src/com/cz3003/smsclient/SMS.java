@@ -49,19 +49,22 @@ public class SMS extends FragmentActivity {
     ArrayList<SMSMessage> messageList = new ArrayList<SMSMessage>();
     //public PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
 
-	/**
-	 * The {@link ViewPager} that will host the section contents.
-	 */
+	
+	 //The {@link ViewPager} that will host the section contents.
 	ViewPager mViewPager;
 	final SMS sms = this;
 
+	
+	//Called when the activity is first created. 
+	//All of the normal static set up: create views, bind data to lists, etc.
+	//Bundle containing the activity's previously frozen state, if there was. 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sms);
 		registerReceivers();
 		// Create the adapter that will return a fragment for each of the three
-		// primary sections of the app.
+		// primary sections of the application.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 
@@ -83,7 +86,7 @@ public class SMS extends FragmentActivity {
 	}
 	
 	public void registerReceivers(){
-		//---when the SMS has been sent---
+		//when the SMS has been sent
         registerReceiver(new BroadcastReceiver(){
             @Override
             public void onReceive(Context arg0, Intent arg1) {
@@ -97,7 +100,7 @@ public class SMS extends FragmentActivity {
             	}
                 switch (getResultCode())
                 {
-                    case Activity.RESULT_OK: {
+                    case Activity.RESULT_OK: { //sms sent
                     	if(message!=null&&message.getSent()==1){
                     		client.sendMessage(new SMSMessage(SMSMessage.SENT,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " sent at " + sdf.format(new Date())));
                     		//messageList.remove(message);
@@ -110,28 +113,28 @@ public class SMS extends FragmentActivity {
                         //Log.w("sms","SMS sent" + sdf.format(new Date()));
                     }
                         break;
-                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE: //generic failure
                     {
                     	client.sendMessage(new SMSMessage(SMSMessage.UNABLE_TO_SEND,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " unable to send sms for unknown reason. " + sdf.format(new Date())));
                         Toast.makeText(sms, "Generic failure", 
                                 Toast.LENGTH_SHORT).show();
                         break;
                     }
-                    case SmsManager.RESULT_ERROR_NO_SERVICE:
+                    case SmsManager.RESULT_ERROR_NO_SERVICE: //no service
                     {
                     	client.sendMessage(new SMSMessage(SMSMessage.UNABLE_TO_CONNECT_TO_NETWORK,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " unable to connect to network due to lack of service. " + sdf.format(new Date())));
                         Toast.makeText(sms, "No service", 
                                 Toast.LENGTH_SHORT).show();
                         break;
                     }
-                    case SmsManager.RESULT_ERROR_NULL_PDU:
+                    case SmsManager.RESULT_ERROR_NULL_PDU: //null PDU
                     {
                     	client.sendMessage(new SMSMessage(SMSMessage.UNABLE_TO_CONNECT_TO_NETWORK,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " unable to connect to network due to lack to radio. " + sdf.format(new Date())));
                         Toast.makeText(sms, "Null PDU", 
                                 Toast.LENGTH_SHORT).show();
                         break;
                     }
-                    case SmsManager.RESULT_ERROR_RADIO_OFF:
+                    case SmsManager.RESULT_ERROR_RADIO_OFF: //radio off
                     {
                     	client.sendMessage(new SMSMessage(SMSMessage.UNABLE_TO_CONNECT_TO_NETWORK,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " unable to connect to network due to radio turned off. " + sdf.format(new Date())));
                         Toast.makeText(sms, "Radio off", 
@@ -142,7 +145,7 @@ public class SMS extends FragmentActivity {
             }
         }, new IntentFilter(SENT));
  
-        //---when the SMS has been delivered---
+        //when the SMS has been delivered
         registerReceiver(new BroadcastReceiver(){
             @Override
             public void onReceive(Context arg0, Intent arg1) {
@@ -157,7 +160,7 @@ public class SMS extends FragmentActivity {
             	
                 switch (getResultCode())
                 {
-                    case Activity.RESULT_OK:
+                    case Activity.RESULT_OK: //sms delivered
                     {
                     	if(message!=null&&message.getDelivered()==1){
                     		client.sendMessage(new SMSMessage(SMSMessage.DELIVERED,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + " delivered at "+ sdf.format(new Date())));
@@ -171,7 +174,7 @@ public class SMS extends FragmentActivity {
                         break;
                     }
                         
-                    case Activity.RESULT_CANCELED:
+                    case Activity.RESULT_CANCELED: //sms not delivered
                     	client.sendMessage(new SMSMessage(SMSMessage.UNABLE_TO_DELIVER,arg1.getIntExtra("com.cz3003.smsclient.smsid", 0),"SMS id " + Integer.toString(arg1.getIntExtra("com.cz3003.smsclient.smsid", 0)) + "  was unable to be delivered due to rejection by recipient's telco. "+ sdf.format(new Date())));
                         Toast.makeText(sms, "SMS not delivered", 
                                 Toast.LENGTH_SHORT).show();
@@ -181,6 +184,7 @@ public class SMS extends FragmentActivity {
         }, new IntentFilter(DELIVERED));    
 	}
 	
+	//sendSMS
 	public void sendSMS(SMSMessage smsMessage){  
 		messageList.add(smsMessage);
 		SmsManager sms = SmsManager.getDefault();
@@ -190,7 +194,9 @@ public class SMS extends FragmentActivity {
         //sentIntent.putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
         //deliveredIntent.putExtra("com.cz3003.smsclient.smsid", smsMessage.getIncidentId());
         
-        
+        //Divide a message text into several fragments.
+        //if not null, an ArrayList of PendingIntents (one for each message part) that is broadcast when the corresponding message part has been sent.
+       // if not null, an ArrayList of PendingIntents (one for each message part) that is broadcast when the corresponding message part has been delivered to the recipient.
         if(smsMessage.getMessage().length()>160){
         	
         	ArrayList<String> parts = sms.divideMessage(smsMessage.getMessage());
@@ -222,17 +228,20 @@ public class SMS extends FragmentActivity {
         uniqueSMSId++;
     }
 
+	//Creating an options menu from fragmentactivity subclass
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+		// Inflate the menu; this adds items such as actions or other
+		//options relevant to current activity context 
+		//to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_sms, menu);
 		return true;
 	}
 
-	/**
-	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-	 * one of the sections/tabs/pages.
-	 */
+	
+	 //A {@link FragmentPagerAdapter} returns a fragment corresponds to
+	 // one of the primary sections/tabs/pages in the application
+	
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 		public SectionsPagerAdapter(FragmentManager fm) {
@@ -242,8 +251,8 @@ public class SMS extends FragmentActivity {
 		@Override
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
-			// Return a DummySectionFragment (defined as a static inner class
-			// below) with the page number as its lone argument.
+			// It returns a DummySectionFragment (defined below as a static inner class)
+			// with page number as its lone argument.
 			Fragment fragment = new DummySectionFragment();
 			Bundle args = new Bundle();
 			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
@@ -253,10 +262,16 @@ public class SMS extends FragmentActivity {
 
 		@Override
 		public int getCount() {
-			// Show 3 total pages.
+			// Show 1 total page.
 			return 1;
 		}
 
+		//This method may be called by the ViewPager to obtain a title 
+		//string to describe a specified page. 
+		//It may return null indicating no title for this page. 
+		//Default returns null.
+		//Parameters: position - position of title requested
+		//returns: title for requested page
 		@Override
 		public CharSequence getPageTitle(int position) {
 			switch (position) {
@@ -270,21 +285,19 @@ public class SMS extends FragmentActivity {
 			return null;
 		}
 	}
-
-	/**
-	 * A dummy fragment representing a section of the app, but that simply
-	 * displays dummy text.
-	 */
+	
+	 //A dummy fragment is used to represent a section of the application, but it just simply
+	 //displays dummy text.
+	 
 	public static class DummySectionFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
+		
+		 //The fragment argument is used to represent the section number for the fragment.
 		public static final String ARG_SECTION_NUMBER = "section_number";
 
 		public DummySectionFragment() {
 		}
 
+		//onCreateView() creates and returns the view hierarchy associated with the fragment. 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -293,29 +306,15 @@ public class SMS extends FragmentActivity {
 			TextView textView = new TextView(getActivity());
 			textView.setGravity(Gravity.CENTER);
 			
-			//SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd_HH:mm:ss");
-			//String currentDateandTime = sdf.format(new Date());
-			
-			//SmsManager smsManager = SmsManager.getDefault();
-			//darling
-			//String smsString = createMsg(sdf);
-			//smsManager.sendTextMessage("97368902", null, smsString, null, null);
-			//lim guan
-			//smsManager.sendTextMessage("92230282", null, "Jia De loves June and...\nThe time this SMS was sent is: " + sdf.format(new Date()) + "\nPlease tell me how long it took you to receive. Or apps me.", null, null);
-			//sri
-			//smsManager.sendTextMessage("81127957", null, "Jia De loves June and...\nThe time this SMS was sent is: " + sdf.format(new Date()) + "\nPlease tell me how long it took you to receive. Or apps me.", null, null);
-			//wei leng
-			//smsManager.sendTextMessage("94593932", null, "Jia De loves June and...\nThe time this SMS was sent is: " + sdf.format(new Date()) + "\nPlease tell me how long it took you to receive. Or apps me.", null, null);
-			//tiffany
-			//smsManager.sendTextMessage("92266801", null, "Jia De loves June and...\nThe time this SMS was sent is: " + sdf.format(new Date()) + "\nPlease tell me how long it took you to receive. Or apps me.", null, null);
-			//textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-			//textView.setText(smsString);
 			return textView;
 		}
 		
+		//create message taking in date format
 		public String createMsg(SimpleDateFormat sdf){
 			return randomASCII()+"The time this SMS was sent is: " + sdf.format(new Date());
 		}
+		
+		//return a random ASCII string
 		public String randomASCII(){
 			Random rand = new Random();
 			String[] asciiArray = {
