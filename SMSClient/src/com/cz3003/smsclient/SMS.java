@@ -29,7 +29,11 @@ import android.widget.Toast;
 
 import com.cz3003.message.SMSMessage;
 import com.cz3003.utils.DeviceUuidFactory;
-
+/**
+ * 
+ * @author Wei Leng
+ *
+ */
 public class SMS extends FragmentActivity {
 
 	/**

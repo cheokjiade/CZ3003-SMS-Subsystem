@@ -6,7 +6,11 @@ import java.rmi.RMISecurityManager;
 import com.cz3003.interfaces.ISMS;
 import com.cz3003.message.CPUMessage;
 import com.cz3003.message.SMSMessage;
- 
+/**
+ * 
+ * @author Sri Hartati
+ *
+ */ 
 public class ErrorClient { 
     // "obj" is the reference of the remote object
     ISMS obj = null; 

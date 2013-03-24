@@ -15,10 +15,11 @@ import com.cz3003.interfaces.SMSInterface;
 import com.cz3003.message.CPUMessage;
 import com.cz3003.recipient.AgencyNumbers;
 
-
-
-
-
+/**
+ * 
+ * @author Lim Guan
+ *
+ */
 public class SMSServer extends UnicastRemoteObject implements SMSInterface {
 
 	/**

@@ -10,7 +10,11 @@ import com.cz3003.message.SMSMessage;
 
 import android.util.Log;
 
-
+/**
+ * 
+ * @author Tiffany
+ *
+ */
 /*
  * The Client that can be run both as a console or a GUI
  */

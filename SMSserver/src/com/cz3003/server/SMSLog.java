@@ -39,7 +39,7 @@ public class SMSLog {
 	}
 	/**
 	 * 
-	 * @param id
+	 * @param id client id.
 	 * @return boolean true if had a log of the client, false if no log.
 	 */
 	public boolean removeClient(int id){
@@ -53,7 +53,7 @@ public class SMSLog {
 
 	/**
 	 * 
-	 * @param id
+	 * @param id client id.
 	 * Adds a new log for a client id. If exists, nothing is done.
 	 */
 	public void addClient(int id){
@@ -65,8 +65,8 @@ public class SMSLog {
 	
 	/**
 	 * edits the score of a client.
-	 * @param uniqueId
-	 * @param smsMessage
+	 * @param uniqueId client id.
+	 * @param smsMessage smsMessage object is an object that is ready for sending out as an SMS.
 	 * 
 	 */
 	public synchronized void editClientScore(int uniqueId, SMSMessage smsMessage){
@@ -85,8 +85,8 @@ public class SMSLog {
 
 	/**
 	 * Select from SMSClientLog based on unique id
-	 * @param uniqueId 
-	 * @return SMSClientLog if true
+	 * @param uniqueId client id.
+	 * @return SMSClientLog that contains score, uniqueId, and an arrayList of SMSLogEntry.
 	 */
 	public SMSClientLog selectClientsLog(int uniqueId){
 		try{

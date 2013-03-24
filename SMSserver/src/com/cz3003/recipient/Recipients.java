@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Recipients {
 	private ArrayList<AgencyNumbers> recipientList;
 	/**
-	 * @return ArrayList
+	 * @return ArrayList of agency numbers.
 	 */
 	public Recipients() {
 		super();
@@ -17,8 +17,8 @@ public class Recipients {
 	}
 	/**
 	 * Returns correct recipient's number
-	 * @param incidentType
-	 * @return String number of agency with incident type
+	 * @param incidentType type of incident.
+	 * @return String number of agency with incident type.
 	 */
 	public String selectNumberBasedOnIncidentType(String incidentType){
 		for (AgencyNumbers recipient : recipientList)
