@@ -16,6 +16,12 @@ public class AgencyNumbers implements Serializable {
     private String number;
     private String type;
 
+    /**
+     * 
+     * @param agencyName Name of agency 
+     * @param number Agency number to SMS to
+     * @param type Incident type. For example, fire
+     */
     public AgencyNumbers(String agencyName, String number, String type) {
         this.agencyName = agencyName;
         this.number = number;

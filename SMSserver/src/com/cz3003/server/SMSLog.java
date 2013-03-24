@@ -62,6 +62,11 @@ public class SMSLog implements ClientMessageReceived{
 		smsClientArrayList.add(new SMSClientLog(id));
 	}
 	
+	/**
+	 * @param uniqueId
+	 * @param smsMessage object
+	 * on message received, clients score is updated.
+	 */
 	@Override
 	public void onMessageReceived(int uniqueId, SMSMessage smsMessage) {
 		editClientScore(uniqueId, smsMessage);		
@@ -86,7 +91,11 @@ public class SMSLog implements ClientMessageReceived{
 		}
 	}
 
-	//public boolean
+	/**
+	 * Select from SMSClientLog based on unique id
+	 * @param uniqueId 
+	 * @return SMSClientLog if true
+	 */
 	public SMSClientLog selectClientsLog(int uniqueId){
 		try{
 			for (SMSClientLog log : smsClientArrayList) 
