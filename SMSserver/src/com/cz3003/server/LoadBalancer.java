@@ -15,9 +15,11 @@ import java.util.Scanner;
 import javax.naming.ldap.Control;
 
 
+import com.cz3003.interfaces.ClientMessageReceived;
 import com.cz3003.logs.SMSClientLog;
 import com.cz3003.logs.SMSLogEntry;
 import com.cz3003.message.CPUMessage;
+import com.cz3003.message.MessageLink;
 import com.cz3003.message.MessageLinkController;
 import com.cz3003.message.SMSMessage;
 import com.cz3003.recipient.AgencyNumbers;
@@ -26,13 +28,22 @@ import com.cz3003.recipient.Recipients;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 /**
+ * The main class of the subsystem. determines which device to use when sending incidents as SMS.
+ * 
  * @author Jia De
  */
-public class LoadBalancer {
+public class LoadBalancer implements ClientMessageReceived{
+	private DeviceManager dm;
+	private SMSLog smsLog;
+	private Recipients recipients;
+	private MessageLinkController messageController;
+	private SMSServer sms;
+	private ErrorClient errorClient;
+	private static int incidentID = 1;
 	/**
-	 * 
-	 * @param args
 	 * Main method of program.
+	 * @param args
+	 * 
 	 */
 	public static void main(String[]args){
 //		if (System.getSecurityManager() == null) {
@@ -64,19 +75,16 @@ public class LoadBalancer {
 		}
 		
 	}
-	private DeviceManager dm;
-	private SMSLog smsLog;
-	private Recipients recipients;
-	private MessageLinkController messageController;
-	private SMSServer sms;
-	private ErrorClient errorClient;
-	private int incidentID = 1;
 	
+	/**
+	 * Constructor.
+	 */
 	public LoadBalancer(){
-		messageController = new MessageLinkController();
-		dm = new DeviceManager(5832);
+		messageController = new MessageLinkController(this);
+		dm = new DeviceManager(5832,this);
 		smsLog = dm.getSmsLog();
 		recipients = new Recipients();
+		errorClient = new ErrorClient();
 		//dm.start();
 		new Thread(new Runnable(){
 		    public void run()
@@ -86,11 +94,33 @@ public class LoadBalancer {
 		    }
 		}).start();
 	}
+	
 	/**
+	 * on message received, clients score is updated.
+	 * @param uniqueId
+	 * @param smsMessage object
 	 * 
-	 * @param smsClientArrayList
-	 * @return
+	 */
+	@Override
+	public void onMessageReceived(int uniqueId, SMSMessage smsMessage) {
+		System.out.println("message delivered");
+		System.out.println(smsMessage.getType());
+		switch(smsMessage.getType()){
+			case SMSMessage.DELIVERED:{
+				System.out.println("message delivered");
+				smsLog.editClientScore(uniqueId, smsMessage);
+				messageController.stopTimeOutTimer(smsMessage.getIncidentId());
+				break;
+			}
+			
+		//case SMSMessage.
+		}
+	}
+	/**
 	 * Chooses the client with the highest score.
+	 * @param smsClientArrayList takes in an arraylist of SMSClient objects
+	 * @return SMSClient The SMSClient with the highest score
+	 * 
 	 */
 	public synchronized SMSClient chooseBestClient(ArrayList<SMSClient> smsClientArrayList){
 		//when no connected client method fails
@@ -105,25 +135,25 @@ public class LoadBalancer {
 	}
 	
 	/**
-	 * 
+	 * Creates the SMSMessage object from the CPUMessage object created by our RMIServer.
 	 * @param cpuMessage
 	 * @return
 	 * 
-	 * Creates the SMSMessage object from the CPUMessage object created by our RMIServer.
+	 * 
 	 */
 	public boolean createMessageToSMS(CPUMessage cpuMessage){
 		sendMessageOut(new SMSMessage(SMSMessage.MESSAGETOSMS, "there is a fire", incidentID++, this.recipients.selectNumberBasedOnIncidentType(cpuMessage.getType())), cpuMessage);
 		return true;
 	}
 	/**
-	 * 
+	 * A method for creating an SMSMessage via individual fields. Used for testing purposes.
 	 * @param incidentId
 	 * @param location
 	 * @param type
 	 * @param description
 	 * @param callerNumber
 	 * @return
-	 * A method for creating an SMSMessage via individual fields. Used for testing purposes.
+	 * 
 	 */
 	public boolean createMessageToSMS(int incidentId, String location, String type, String description, String callerNumber){
 		String messageContents = type + " @ " + location + "\nDescription: " + description + "\nReported by " + callerNumber + " @ " + (new SimpleDateFormat("HH:mm:ss")).format(new Date()) + "\nRef No.: " + incidentId;
@@ -132,20 +162,20 @@ public class LoadBalancer {
 	}
 	
 	/**
-	 * 
+	 * Called when sending an error report to CPU.
 	 * @param smsMessage
 	 * @return
-	 * Called when sending an error report to CPU.
+	 * 
 	 */
-	public boolean sendErrorReport(SMSMessage smsMessage){
-		
+	public boolean sendErrorReport(MessageLink linkedMessage){
+		errorClient.sendError(linkedMessage.getCpuMessage(), linkedMessage.getSmsMessage());
 		return true;
 	}
 	
 	/**
-	 * 
+	 * Sends an SMSMessage to a client. And modifies the score. Used for testing.
 	 * @param smsMessage
-	 * Sends an SMSMessage to a client. And modifies the score.
+	 * 
 	 */
 	private synchronized boolean sendMessageOut(SMSMessage smsMessage) {
 		SMSClient bestClient = chooseBestClient(dm.getSMSClients());
@@ -165,12 +195,12 @@ public class LoadBalancer {
 		
 	}
 	/**
-	 * 
+	 * The method that will be called by the RMI server when CPU passes us an incident.
 	 * @param smsMessage
 	 * @param cpuMessage
-	 * @return
+	 * @return always returns true
 	 * 
-	 * The method that will be called by the RMI server when CPU passes us an incident.
+	 * 
 	 */
 	public synchronized boolean sendMessageOut(SMSMessage smsMessage, CPUMessage cpuMessage){
 		SMSClient bestClient = chooseBestClient(dm.getSMSClients());
@@ -184,6 +214,8 @@ public class LoadBalancer {
 			SMSClientLog clientLog = smsLog.selectClientsLog(bestClient.getUniqueId());
 			clientLog.getSmsLogEntryArrayList().add(new SMSLogEntry("Message sent to device", SMSLogEntry.MESSAGESENT));
 			clientLog.setScore(clientLog.getScore()-50);
+			messageController.createNewMessageLink(cpuMessage, smsMessage);
+			
 		}
 			
 		return true;
@@ -198,10 +230,10 @@ public class LoadBalancer {
 		return sendMessageToClient(client, smsMessage);
 	}
 	/**
-	 * 
+	 * Updates the list of recipients. Values are currently hard coded.
 	 * @param jsonString
 	 * @return
-	 * Updates the list of recipients. Values are currently hard coded.
+	 * 
 	 */
 	public boolean updateRecipientList(String jsonString){
 		ArrayList<AgencyNumbers> recipientList = new ArrayList<AgencyNumbers>();

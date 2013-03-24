@@ -5,11 +5,11 @@ public class MessageLink {
 	private SMSMessage smsMessage;
 	private SMSTimer smsTimer;
 	
-	public MessageLink(CPUMessage cpuMessage, SMSMessage smsMessage) {
+	public MessageLink(CPUMessage cpuMessage, SMSMessage smsMessage, MessageLinkController messageLinkController) {
 		super();
 		this.cpuMessage = cpuMessage;
 		this.smsMessage = smsMessage;
-		smsTimer = new SMSTimer(15, this, cpuMessage, smsMessage);
+		smsTimer = new SMSTimer(15, this, cpuMessage, smsMessage, messageLinkController);
 	}
 	public MessageLink(CPUMessage cpuMessage, SMSMessage smsMessage,
 			SMSTimer smsTimer) {

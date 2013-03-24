@@ -10,7 +10,7 @@ import com.cz3003.message.SMSMessage;
 /**
  * @author June Quak
  */
-public class SMSLog implements ClientMessageReceived{
+public class SMSLog {
 	private ArrayList<SMSClientLog> smsClientArrayList;// = new ArrayList<>();
 
 	/**
@@ -62,20 +62,12 @@ public class SMSLog implements ClientMessageReceived{
 		smsClientArrayList.add(new SMSClientLog(id));
 	}
 	
+	
 	/**
-	 * @param uniqueId
-	 * @param smsMessage object
-	 * on message received, clients score is updated.
-	 */
-	@Override
-	public void onMessageReceived(int uniqueId, SMSMessage smsMessage) {
-		editClientScore(uniqueId, smsMessage);		
-	}
-	/**
-	 * 
+	 * edits the score of a client.
 	 * @param uniqueId
 	 * @param smsMessage
-	 * edits the score of a client.
+	 * 
 	 */
 	public synchronized void editClientScore(int uniqueId, SMSMessage smsMessage){
 		SMSClientLog clientLog = selectClientsLog(uniqueId);

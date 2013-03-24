@@ -8,7 +8,7 @@ import java.util.Date;
 
 
 /**
- * 
+ * This class manages all connected clients and removes them when they disconnect
  * @author Jia De
  *
  */
@@ -20,15 +20,23 @@ public class DeviceManager extends Thread{
 	private SMSLog smsLog;
 	private boolean keepGoing;// boolean to tell
 	private int port;//port the server runs on
-	
-	public DeviceManager (int port){
+	private LoadBalancer loadBalancer;
+	/**
+	 * Constructor of device manager.
+	 * @param port int - the value of the port the server listens on
+	 * @param loadBalancer 
+	 */
+	public DeviceManager (int port, LoadBalancer loadBalancer){
 		
 		sdf = new SimpleDateFormat("HH:mm:ss");
 		smsLog = new SMSLog();
 		this.port = port;
 		smsClientArrayList= new ArrayList<SMSClient>();
-		
+		this.loadBalancer = loadBalancer;
 	}
+	/**
+	 * Called when the thread starts
+	 */
 	public void start() {
 		keepGoing = true;
 		/* create socket server and wait for connection requests */
@@ -47,7 +55,7 @@ public class DeviceManager extends Thread{
 				// if I was asked to stop
 				if(!keepGoing)
 					break;
-				SMSClient t = new SMSClient(socket, ++uniqueId, smsLog, this);  // make a thread of it
+				SMSClient t = new SMSClient(socket, ++uniqueId, loadBalancer, this);  // make a thread of it
 				smsClientArrayList.add(t);	
 				smsLog.addClient(uniqueId);// save it in the ArrayList
 				t.start();
@@ -77,7 +85,10 @@ public class DeviceManager extends Thread{
 			display(msg);
 		}
 	}
-	
+	/**
+	 * Remove a client with the specified id from the list of connected clients
+	 * @param id integer - the id to be removed
+	 */
 	synchronized void remove(int id) {
 		// scan the array list until we found the Id
 		for(int i = 0; i < smsClientArrayList.size(); ++i) {
@@ -90,7 +101,10 @@ public class DeviceManager extends Thread{
 		}
 	}
 	
-	
+	/**
+	 * Print out a message and include the date of the message
+	 * @param msg - String to be displayed
+	 */
 	private void display(String msg) {
 		String time = sdf.format(new Date()) + " " + msg;
 			System.out.println(time);

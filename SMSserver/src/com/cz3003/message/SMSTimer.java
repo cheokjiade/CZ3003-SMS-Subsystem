@@ -10,6 +10,7 @@ public class SMSTimer {
     private MessageLink messageLink;
     private CPUMessage cpuMessage;
     private SMSMessage smsMessage;
+    private MessageLinkController messageLinkController;
     
     public SMSTimer(int seconds) {
     	timerz = new Timerz();
@@ -17,10 +18,11 @@ public class SMSTimer {
         timer.schedule(timerz, seconds*1000);
 	}
     
-    public SMSTimer(int seconds,MessageLink messageLink,CPUMessage cpuMessage,SMSMessage smsMessage) {
+    public SMSTimer(int seconds,MessageLink messageLink,CPUMessage cpuMessage,SMSMessage smsMessage, MessageLinkController messageLinkController) {
     	this.messageLink = messageLink;
     	this.cpuMessage = cpuMessage;
     	this.smsMessage = smsMessage;
+    	this.messageLinkController = messageLinkController;
     	timerz = new Timerz();
         timer = new Timer();
         timer.schedule(timerz, seconds*1000);
@@ -28,12 +30,13 @@ public class SMSTimer {
     
     public boolean cancelTimer(){
     	timerz.toTerminate();
+    	messageLinkController.removeMessageLink(messageLink);
     	return true;
     }
 
     class Timerz extends TimerTask {
         public void run() {
-        	//TODO time is up, send error to CPU to notify message could not be sent in time
+        	messageLinkController.sendErrorMessageToLoadBalancer(messageLink);
             System.out.format("Time's up!%n");  
         }
         
