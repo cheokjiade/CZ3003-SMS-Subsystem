@@ -220,7 +220,12 @@ public class LoadBalancer implements ClientMessageReceived{
 			
 		return true;
 	}
-	//TODO change msg and no to smsmessage object
+	/**
+	 * 
+	 * @param client The object that maintains the connection to a client
+	 * @param smsMessage The object that the client will take in and convert to an SMS
+	 * @return true if message is successfully pushed to the client, false if not
+	 */
 	public boolean sendMessageToClient(SMSClient client, SMSMessage smsMessage){
 		//when no connected client we cant send a message
 		if (client == null) return false;

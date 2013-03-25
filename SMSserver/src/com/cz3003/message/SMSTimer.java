@@ -60,6 +60,7 @@ public class SMSTimer {
         public void run() {
         	messageLinkController.sendErrorMessageToLoadBalancer(messageLink);
             System.out.format("Time's up!%n");  
+            timer.cancel(); 
         }
         /**
          * Ends the timer
