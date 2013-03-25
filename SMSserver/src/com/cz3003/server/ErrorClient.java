@@ -12,9 +12,14 @@ import com.cz3003.message.SMSMessage;
  *
  */ 
 public class ErrorClient { 
-    // "obj" is the reference of the remote object
+    /**
+     *  "obj" is the reference of the remote object
+     */
     ISMS obj = null; 
- 
+
+    /**
+     * check for error - send error report if there is error
+     */
     public void sendError(CPUMessage cpuMessage, SMSMessage smsMessage) { 
         try { 
             obj = (ISMS)Naming.lookup("//localhost/RmiServer");
@@ -22,19 +27,25 @@ public class ErrorClient {
         } catch (Exception e) { 
             System.err.println("RmiClient exception: " + e); 
             e.printStackTrace(); 
- 
-            //return e.getMessage();
+            /**
+             * print exception error when it occurs and call stack trace function to standard error output
+             */
         } 
     } 
  
     public static void main(String args[]) {
-        // Create and install a security manager
+        /**
+         * Create and install a security manager
+         */
+    	
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new RMISecurityManager());
         }
- 
+
+        /**
+         * create new error client
+         */
         ErrorClient cli = new ErrorClient();
  
-        //System.out.println(cli.getMessage());
     }
 }

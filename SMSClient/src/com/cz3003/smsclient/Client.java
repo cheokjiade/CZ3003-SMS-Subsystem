@@ -1,10 +1,11 @@
 package com.cz3003.smsclient;
 
 
-import java.net.*;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.net.*;
 
 import com.cz3003.message.SMSMessage;
 
@@ -12,12 +13,14 @@ import android.util.Log;
 
 /**
  * 
- * @author Tiffany
+ * @author Sri Hartati
  *
  */
-/*
- * The Client that can be run both as a console or a GUI
+
+/**
+ * the Client that can be run both as a console or a GUI
  */
+
 public class Client{
 
 	static String SENT = "SMS_SENT";
@@ -26,26 +29,26 @@ public class Client{
 	private ObjectInputStream sInput;		// to read from the socket
 	private ObjectOutputStream sOutput;		// to write on the socket
 	private Socket socket;
-
-	// if I use a GUI or not
-	//private ClientGUI cg;
 	
-	// the server, the port and the username
+	/**
+	 * the server, the port and the username
+	 */
 	private String server, username;
 	private int port;
 
-	/*
-	 *  Constructor called by console mode
-	 *  server: the server address
-	 *  port: the port number
-	 *  username: the username
-	 */
-
-
-	/*
+	
+	/**
+	 * Constructor called by console mode
 	 * Constructor call when used from a GUI
-	 * in console mode the ClienGUI parameter is null
+	 * In console mode the ClienGUI parameter is null
+	 * 
+	 * @param server the server address
+	 * @param port the port number
+	 * @param username the username
+	 * @param sms the sms
+	 *
 	 */
+	
 	Client(String server, int port, String username, SMS sms) {
 		this.server = server;
 		this.port = port;
@@ -53,27 +56,34 @@ public class Client{
 		this.sms = sms;
 	}
 	
-	
-	
-	/*
+	/**
 	 * To start the dialog
+	 * @return return false if cannot connect to server
 	 */
+	
 	public boolean connect() {
-		// try to connect to the server
+		/**
+		 *  try to connect to the server and catch error if unable to connect to server
+		 */
 		try {
 			socket = new Socket(server, port);
 			Log.w("sms", server);
-		} 
-		// if it failed not much I can so
+		}
 		catch(Exception ec) {
-			display("Error connectiong to server:" + ec);
+			display("Error connecting to server:" + ec);
 			return false;
 		}
 		
+		/**
+		 * display message when it is connected to the server
+		 */
 		String msg = "Connection accepted " + socket.getInetAddress() + ":" + socket.getPort();
 		display(msg);
 	
-		/* Creating both Data Stream */
+		/**
+		 * Creating both input and output data streams
+		 * return false if unable to create data streams
+		 */
 		try
 		{
 			sInput  = new ObjectInputStream(socket.getInputStream());
@@ -83,11 +93,16 @@ public class Client{
 			display("Exception creating new Input/output Streams: " + eIO);
 			return false;
 		}
-
-		// creates the Thread to listen from the server 
+		
+		/**
+		 * Creates the thread to listen from the server
+		 */
 		new ListenFromServer().start();
-		// Send our username to the server this is the only message that we
-		// will send as a String. All other messages will be ChatMessage objects
+		
+		/**
+		 * Send our username to the server this is the only message that we
+		 * will send as a String. All other messages will be ChatMessage objects
+		 */
 		try
 		{
 			sOutput.writeObject(username);
@@ -97,23 +112,34 @@ public class Client{
 			disconnect();
 			return false;
 		}
-		// success we inform the caller that it worked
+		
+		/**
+		 * return true if success and inform the caller that it worked
+		 */
 		return true;
 	}
 
-	/*
-	 * To send a message to the console or the GUI
+	/**
+	 * @param msg the message send to the console or the GUI
 	 */
 	private void display(String msg) {
 		Log.w("sms", msg);
-			System.out.println(msg);      // println in console mode
+			System.out.println(msg); 
+			/**
+			 * print the message in console mode
+			 */
 	
 	}
 	
-	/*
-	 * To send a message to the server
+	/**
+	 * 
+	 * @param msg the message send to the server
 	 */
+	
 	void sendMessage(SMSMessage msg) {
+		/**
+		 * try output the message and display error message if unable to write to server
+		 */
 		try {
 			sOutput.writeObject(msg);
 		}
@@ -122,29 +148,32 @@ public class Client{
 		}
 	}
 
-	/*
-	 * When something goes wrong
-	 * Close the Input/Output streams and disconnect not much to do in the catch clause
+	/**
+	 * When something goes wrong in the connection
+	 * close the Input/Output streams and disconnect
+	 * not much to do in the catch clause
 	 */
+	
 	private void disconnect() {
 		try { 
 			if(sInput != null) sInput.close();
 		}
-		catch(Exception e) {} // not much else I can do
+		catch(Exception e) {}
 		try {
 			if(sOutput != null) sOutput.close();
 		}
-		catch(Exception e) {} // not much else I can do
+		catch(Exception e) {} 
         try{
 			if(socket != null) socket.close();
 		}
-		catch(Exception e) {} // not much else I can do
+		catch(Exception e) {} 
 		
 			
 	}
-	/*
-	 * a class that waits for the message from the server and append them to the JTextArea
-	 * if we have a GUI or simply System.out.println() it in console mode
+	/**
+	 * ListenFromServer waits for the message from the server and append them to the JTextArea if we have a GUI
+	 * or simply System.out.println() it if it is in console mode
+	 *
 	 */
 	class ListenFromServer extends Thread {
 		public void run() {
