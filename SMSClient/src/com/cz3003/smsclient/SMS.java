@@ -40,6 +40,7 @@ public class SMS extends FragmentActivity {
 	 * intensive, it may be best to switch to a
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
+	private static final String SERVER_IPADDRESS = "172.21.144.138";
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	private static final String SENT = "SMS_SENT";
 	private static final String DELIVERED = "SMS_DELIVERED";
@@ -89,7 +90,7 @@ public class SMS extends FragmentActivity {
 		    public void run()
 		    {
 		    	DeviceUuidFactory uuid = new DeviceUuidFactory(getApplicationContext());
-		    	client = new Client("192.168.1.5", 5832, uuid.getDeviceUuid().toString(),sms);
+		    	client = new Client(SERVER_IPADDRESS, 5832, uuid.getDeviceUuid().toString(),sms);
 				client.connect();
 		    }
 		}).start();

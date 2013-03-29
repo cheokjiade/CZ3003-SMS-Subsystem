@@ -8,7 +8,8 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.cz3003.recipient.AgencyNumbers;
+import CPU.AgencyNumbers;
+
 import com.cz3003.recipient.Recipients;
 
 public class RecipientsTest {

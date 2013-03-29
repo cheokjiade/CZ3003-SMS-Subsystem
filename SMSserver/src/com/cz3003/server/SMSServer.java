@@ -10,10 +10,11 @@ import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
 import java.util.ArrayList;
 
-import com.cz3003.interfaces.ISMS;
+import CPU.AgencyNumbers;
+import CPU.ISMS;
+
 import com.cz3003.interfaces.SMSInterface;
 import com.cz3003.message.CPUMessage;
-import com.cz3003.recipient.AgencyNumbers;
 
 /**
  * @author Lim Guan
@@ -32,7 +33,13 @@ public class SMSServer extends UnicastRemoteObject implements SMSInterface {
 	 */
 	public SMSServer(LoadBalancer loadBalancer) throws RemoteException {
         System.out.println("Initializing Server");
-        //java.rmi.Naming.rebind("SMS", this);
+        try {
+			java.rmi.Naming.rebind("SMS", this);
+			System.out.println("Initialized Server");
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         this.loadBalancer = loadBalancer;
         
     }

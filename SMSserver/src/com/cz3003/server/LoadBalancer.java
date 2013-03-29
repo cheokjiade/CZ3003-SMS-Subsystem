@@ -15,6 +15,8 @@ import java.util.Scanner;
 import javax.naming.ldap.Control;
 
 
+import CPU.AgencyNumbers;
+
 import com.cz3003.interfaces.ClientMessageReceived;
 import com.cz3003.logs.SMSClientLog;
 import com.cz3003.logs.SMSLogEntry;
@@ -22,7 +24,6 @@ import com.cz3003.message.CPUMessage;
 import com.cz3003.message.MessageLink;
 import com.cz3003.message.MessageLinkController;
 import com.cz3003.message.SMSMessage;
-import com.cz3003.recipient.AgencyNumbers;
 import com.cz3003.recipient.Recipient;
 import com.cz3003.recipient.Recipients;
 import com.google.gson.Gson;
@@ -55,14 +56,15 @@ public class LoadBalancer implements ClientMessageReceived{
 			sms.setLoadBalancer(server);
             //java.rmi.Naming.rebind("SMS", sms);
 			//Remote stub = (Remote) UnicastRemoteObject.exportObject(sms, 1076);
-			Registry reg = LocateRegistry.createRegistry(1099);
+			//Registry reg = LocateRegistry.createRegistry(1099);
 			System.out.println("Server is ready");
-			reg.rebind("SMS", sms);
+			//reg.rebind("SMS", sms);
             System.out.println("Server Ready");
         } catch (RemoteException RE) {
             System.out.println("Remote Server Error:" + RE.getMessage());
             System.exit(0);
         }
+		server.errorClient.sendAgencyNumbers();
 		server.updateRecipientList("");
 		int someid=1;
 		//server.updateRecipientList("[{\"disasterType\":\"TIFFANY\",\"phoneNumber\":\"97374214\"},{\"disasterType\":\"SRI\",\"phoneNumber\":\"81127957\"},{\"disasterType\":\"JUNE\",\"phoneNumber\":\"97368902\"}]");
@@ -208,6 +210,7 @@ public class LoadBalancer implements ClientMessageReceived{
 			//TODO no connected client. add to pending queue or something
 			//TODO send error message to CPU
 			System.out.println("error");
+			errorClient.sendError(cpuMessage, smsMessage);
 			
 		}
 		else {
